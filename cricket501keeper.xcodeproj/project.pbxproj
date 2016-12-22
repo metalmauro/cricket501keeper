@@ -99,6 +99,7 @@
 				TargetAttributes = {
 					956E8FBA1E0C2E550084F94F = {
 						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = G3KYTESUM8;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -262,7 +263,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = G3KYTESUM8;
 				INFOPLIST_FILE = cricket501keeper/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = kurokakari.cricket501keeper;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -274,7 +277,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = G3KYTESUM8;
 				INFOPLIST_FILE = cricket501keeper/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = kurokakari.cricket501keeper;
 				PRODUCT_NAME = "$(TARGET_NAME)";
