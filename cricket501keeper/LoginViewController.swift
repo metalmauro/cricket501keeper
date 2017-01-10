@@ -97,7 +97,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         newUser.email = email
         let has = "saf8198538906passw".hashValue
         newUser.password = String(format: "%d%d", has.hashValue, password.hashValue)
-        newUser.setValue(["spidermatt", nil], forKey: "friendsList")
+        newUser.setValue(["spidermatt"], forKey: "friendsList")
         
         newUser.signUpInBackground { (success, error) in
             if let error = error {
@@ -115,7 +115,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 if userKeySuccess == true && passWKeySuccess == true {
                     print("save to keychain was successful")
                 }
-                self.dismiss(animated: true, completion: nil)
+                let rootV = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
+                rootV.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen") as! ViewController
+                rootV.reloadInputViews()
             }
         }
     }
@@ -136,7 +138,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 if userKeySuccess == true && passWKeySuccess == true {
                     print("save to keychain was successful")
                 }
-                self.dismiss(animated: true, completion: nil)
+                let rootV = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
+                rootV.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen") as! ViewController
+                rootV.reloadInputViews()
             }
         }
     }

@@ -10,7 +10,7 @@ import UIKit
 import MMDrawerController
 import Parse
 
-class RootViewController: MMDrawerController, LoginDelegate {
+class RootViewController: MMDrawerController {
 
     var currentUser:PFUser?
     
@@ -25,18 +25,6 @@ class RootViewController: MMDrawerController, LoginDelegate {
             let login:LoginViewController = (UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "login") as! LoginViewController)
             self.centerViewController = login
         } 
-    }
-    func switchSideViews() {
-        self.currentUser = PFUser.current()
-        if self.currentUser == nil {
-            let login:LoginViewController = (UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "login") as! LoginViewController)
-            self.centerViewController = login
-        } else {
-            let mainScreen:ViewController = (UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen") as! ViewController)
-            let socialView:SocialViewController = (UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "socialView") as! SocialViewController)
-            self.centerViewController = mainScreen
-            self.leftDrawerViewController = socialView
-        }
     }
     
     

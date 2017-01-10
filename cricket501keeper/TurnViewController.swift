@@ -30,7 +30,7 @@ class TurnViewController: UIViewController {
         let gameInfoArray = self.gameQueryInfo?.components(separatedBy: ":")
         let rules = gameInfoArray?[0]
         
-        guard (rules?.isEqual("501"))! else {
+        guard (rules?.contains("501"))! else {
             // is cricket game
             if self.cricketGM == nil {
                 self.cricketGM = CricketGameManager(withGameID: self.gameQueryInfo!)

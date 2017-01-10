@@ -20,16 +20,22 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     var games:[PFObject]?
     var currentUser:PFUser?
-    var opponent:PFUser?
+    var opponent:PFObject?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.gamePicker.dataSource = self
         self.gamePicker.delegate = self
         
-        self.currentUser = PFUser.current()
-        if self.currentUser == nil {
-            
+        switch self.gameTypeControl.selectedSegmentIndex {
+        case 0:
+            self.fetchCricketInformation()
+            break
+        case 1:
+            self.fetch501Information()
+            break
+        default:
+            break
         }
     }
     
@@ -38,11 +44,13 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         switch index {
         case 0:
             // make sure Game Type is Cricket
+            self.fetchCricketInformation()
             self.backingImage.image = UIImage(named: "cricketSelect")
             self.gamePicker.reloadAllComponents()
             break
         case 1:
             //make sure GameType is set as 501
+            self.fetch501Information()
             self.backingImage.image = UIImage(named: "501Select")
             self.gamePicker.reloadAllComponents()
             break
@@ -67,7 +75,8 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         }
     }
     
-    // segue notes: Will send the currentGame's objectId to be saved and easily fetched by the subsequent View Controllers
+    // segue notes: Will send a 2pt String, which is what the game is pinned under
+    // to be saved and easily fetched by the subsequent View Controllers from Pin
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let pages = segue.destination as! GamePageViewController
         pages.gameQueryInfo = self.sendingGame!
@@ -80,10 +89,8 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         var rows = 1
         let gameRules = self.gameTypeControl.selectedSegmentIndex
-        switch gameRules
-        {
+        switch gameRules {
         case 0:
-            self.fetchCricketInformation()
             let gameCount:Int? = (self.games?.count)
             guard gameCount != nil else {
                 return 1
@@ -93,7 +100,6 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             }
             break
         case 1:
-            self.fetch501Information()
             let gameCount:Int? = (self.games?.count)
             guard gameCount != nil else {
                 return 1
@@ -141,10 +147,10 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         newGame["player"] = self.currentUser
         
         if self.opponent == nil {
-            self.makeTempOpponent(newGame)
+            self.makeTempOpponent()
         }
         newGame["opponent"] = self.opponent
-        newGame["turnCounter"] = 0
+        newGame["turnCounter"] = 1
         
         // device owner points
         let p1Points = PFObject(className: "Pts501")
@@ -158,16 +164,20 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         p2Points["Player"] = self.opponent
         newGame["opponentPoints"] = p2Points
         newGame.saveInBackground { (success, error) in
-            if error != nil {
-                print((error?.localizedDescription)!)
-                print("sorry about that save attempt (ViewContoller-178)")
+            if let error = error {
+                print((error.localizedDescription))
+                print("sorry about that pin attempt (ViewContoller-184)")
+            } else {
+                print("Game saved")
             }
         }
-        self.sendingGame = String(format: "501:%@%@", (self.currentUser?.objectId)!, (self.opponent?.objectId)!)
+        self.sendingGame = String(format: "501:%@v%@", (self.currentUser?.username)!, (self.opponent?.value(forKey: "username") as! String))
         newGame.pinInBackground(withName: self.sendingGame!) { (success, error) in
-            if (error != nil) {
-                print((error?.localizedDescription)!)
+            if let error = error {
+                print((error.localizedDescription))
                 print("sorry about that pin attempt (ViewContoller-184)")
+            } else {
+                print("Game pinned")
             }
         }
     }
@@ -175,9 +185,8 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         let newGame = PFObject(className: "GameCricket")
         newGame["timeStart"] = Date()
         newGame["player"] = self.currentUser
-        
         if self.opponent == nil {
-            self.makeTempOpponent(newGame)
+            self.makeTempOpponent()
         }
         newGame["opponent"] = self.opponent
         newGame["turnCounter"] = 0
@@ -194,12 +203,21 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         p2Points["Player"] = self.opponent
         newGame["opponentPoints"] = p2Points
         
-        newGame.saveInBackground()
-        self.sendingGame = String(format: "Cricket:%@%@", (self.currentUser?.objectId)!, (self.opponent?.objectId)!)
+        newGame.saveInBackground { (success, error) in
+            if let error = error {
+                print((error.localizedDescription))
+                print("sorry about that pin attempt (ViewContoller-184)")
+            } else {
+                print("Game saved")
+            }
+        }
+        self.sendingGame = String(format: "Cricket:%@v%@", (self.currentUser?.username)!, (self.opponent?.value(forKey: "username"))! as! String)
         newGame.pinInBackground(withName: self.sendingGame!) { (success, error) in
-            if (error != nil) {
-                print((error?.localizedDescription)!)
-                print("sorry about that pin attempt (ViewContoller-222)")
+            if let error = error {
+                print((error.localizedDescription))
+                print("sorry about that pin attempt (ViewContoller-184)")
+            } else {
+                print("Game pinned")
             }
         }
     }
@@ -231,49 +249,51 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     //MARK: - Parse fetching functions
     func fetch501Information() {
-        let query = PFQuery(className: "Game501")
-        query.whereKey("timeEnd", equalTo: "undefined")
-        query.findObjectsInBackground { (objects, error:Error?) in
-            guard error == nil else{
-                print((error?.localizedDescription)!)
-                print("sorry about that find attempt (ViewContoller-257)")
-                return
-            }
-            guard objects != nil else{
-                print("objects array was nil")
-                return
-            }
-            print("have 501 objects")
-            self.games = objects
+        guard PFUser.current() != nil else {
+            return
         }
+        self.currentUser = PFUser.current()
+        let subQuery1 = PFQuery(className: "Game501")
+        subQuery1.whereKey("player", equalTo: self.currentUser!)
+        let subQuery2 = PFQuery(className: "Game501")
+        subQuery2.whereKey("timeEnd", equalTo: "")
         
+        let query = PFQuery.orQuery(withSubqueries: [subQuery1, subQuery2])
+        query.findObjectsInBackground(block: { (objects, error) in
+            print("bloop")
+            guard objects != nil else {
+                print("no objects")
+                return
+            }
+            self.games = objects
+        })
+        self.gamePicker.reloadAllComponents()
     }
     func fetchCricketInformation() {
-        let query = PFQuery(className: "GameCricket")
-        query.whereKey("timeEnd", equalTo: "undefined")
-        query.findObjectsInBackground { (objects, error:Error?) in
-            guard error == nil else{
-                print(error?.localizedDescription as Any)
-                print("sorry about that find attempt (ViewContoller-275)")
-                return
-            }
-            guard objects != nil else{
-                print("objects array was nil")
-                return
-            }
-            print("have cricket objects")
-            self.games = objects
+        guard PFUser.current() != nil else {
+            return
         }
+        self.currentUser = PFUser.current()
+        let query = PFQuery(className: "Game501")
+        query.whereKey("player", equalTo: self.currentUser!)
+        query.whereKey("timeEnd", equalTo: "")
+        
+        query.findObjectsInBackground(block: { (objects, error) in
+            guard objects != nil else {
+                print("no objects")
+                return
+            }
+            self.games = objects
+        })
+        self.gamePicker.reloadAllComponents()
     }
     
     //MARK: - TemporaryOpponent
-    func makeTempOpponent(_ game:PFObject){
-        let newUser = PFUser()
-        newUser.username = "LocalOpponent"
-        newUser.email = ""
-        let has = "saf8198538906passw".hashValue
-        newUser.password = String(format: "%d%d", has.hashValue, "temp".hashValue)
-        newUser.signUpInBackground()
+    func makeTempOpponent(){
+        let newUser = PFObject(className: "LocalOpp")
+        newUser["username"] = "LocalOpponent"
+        
+        newUser.saveInBackground()
         self.opponent = newUser
     }
 }

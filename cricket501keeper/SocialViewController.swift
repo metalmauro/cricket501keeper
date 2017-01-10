@@ -22,26 +22,35 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
     var friendsList:Array<String>?
     var searchList:Array<String>?
     @IBOutlet weak var searchField: UITextField!
+    @IBOutlet weak var userLabel: UILabel!
     
+    @IBOutlet weak var signOutButton: UIButton!
     var gameController:FriendsListDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.friendsTable.dataSource = self
-        self.friendsTable.delegate = self
-        self.searchTable.dataSource = self
-        self.searchTable.delegate = self
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
         guard PFUser.current() != nil else{
             print("there is no Current User (SocialVC)")
             return
         }
         self.currentUser = PFUser.current()
         self.friendsList = self.currentUser?.value(forKey: "friendsList") as? Array
+        self.friendsTable.dataSource = self
+        self.friendsTable.delegate = self
+        self.searchTable.dataSource = self
+        self.searchTable.delegate = self
+        self.userLabel.text = self.currentUser?.username
     }
     
+//    override func viewWillAppear(_ animated: Bool) {
+//        guard PFUser.current() != nil else{
+//            print("there is no Current User (SocialVC)")
+//            return
+//        }
+//        self.currentUser = PFUser.current()
+//        self.friendsList = self.currentUser?.value(forKey: "friendsList") as? Array
+//    }
+//    
     @IBAction func search(_ sender: Any) {
         let query:PFQuery = PFUser.query()!
         query.whereKey("username", contains: self.searchField.text)
@@ -58,7 +67,12 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
             }
         }
     }
-    
+    @IBAction func signOut(_ sender: Any) {
+        PFUser.logOut()
+        let rootV = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
+        rootV.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "login") as! ViewController
+        rootV.reloadInputViews()
+    }
     //MARK: - Cell functionality
     func addFriend(_ username:String) {
         self.friendsList?.append(username)
@@ -68,13 +82,8 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
     func addOpponent(_ username:String) {
         let query = PFUser.query()
         query?.whereKey("username", equalTo: username)
-        query?.findObjectsInBackground(block: { (users, error) in
-            guard error == nil else {
-                print("error adding Opponent (SocialVC)")
-                return
-            }
-            self.gameController?.addUserToGame(_user: users?.last as! PFUser)
-        })
+        let user = try? query?.getFirstObject() as! PFUser
+        self.gameController?.addUserToGame(_user: user!)
     }
     
     

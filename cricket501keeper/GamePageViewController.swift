@@ -10,7 +10,7 @@ import UIKit
 import Parse
 
 class GamePageViewController: UIPageViewController, UIPageViewControllerDataSource {
-
+    
     var rules:String?
     public var pageIndex:Int?
     public var gameQueryInfo:String?
@@ -28,8 +28,11 @@ class GamePageViewController: UIPageViewController, UIPageViewControllerDataSour
         }
         let currentGameArray = gameQueryInfo?.components(separatedBy: ":")
         self.rules = (currentGameArray?[0])! as String
+        self.setViewControllers([self.viewControllerAtIndex(index: 0)!],
+                                direction: UIPageViewControllerNavigationDirection.forward,
+                                animated: true,
+                                completion: nil)
     }
-    
     
     //MARK: - PageView DataSource
     func viewControllerAtIndex(index:Int) -> UIViewController? {

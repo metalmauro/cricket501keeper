@@ -21,9 +21,10 @@ class ShotViewController: UIViewController {
     @IBOutlet weak var shot2Label: UILabel!
     @IBOutlet weak var shot3Label: UILabel!
     @IBOutlet weak var missButton: UIButton!
-    @IBOutlet var singles: [UIButton]!
-    @IBOutlet var doubles: [UIButton]!
-    @IBOutlet var triples: [UIButton]!
+    @IBOutlet var rightButtons: [UIButton]!
+    @IBOutlet var leftButtons: [UIButton]!
+    @IBOutlet var centreButtons: [UIButton]!
+    
     @IBOutlet weak var bull: UIButton!
     @IBOutlet weak var doubleBull: UIButton!
     @IBOutlet weak var confirmScoresButton: UIButton!
@@ -42,30 +43,28 @@ class ShotViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // add button functionality (and angles, if needed)
-        for button:UIButton in self.singles {
-            button.addTarget(self, action: Selector(("setShotValue:")), for: UIControlEvents.touchUpInside)
+        for button:UIButton in self.centreButtons {
+            button.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
         }
-        for button:UIButton in self.doubles {
-            if (button.restorationIdentifier?.isEqual("doubleRight"))! {
-                button.transform.rotated(by: CGFloat(-35))
+        for button:UIButton in self.leftButtons {
+            guard button.tag > 1 else {
+                button.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
+                return
             }
-            if (button.restorationIdentifier?.isEqual("doubleLeft"))! {
-                button.transform.rotated(by: CGFloat(35))
-            }
-            button.addTarget(self, action: Selector(("setShotValue:")), for: UIControlEvents.touchUpInside)
+            button.transform = CGAffineTransform(rotationAngle: CGFloat(24.9))
+            button.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
         }
-        for button:UIButton in self.triples {
-            if (button.restorationIdentifier?.isEqual("tripleRight"))! {
-                button.transform.rotated(by: CGFloat(-35))
+        for button:UIButton in self.rightButtons {
+            guard button.tag > 1 else {
+                button.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
+                return
             }
-            if (button.restorationIdentifier?.isEqual("tripleLeft"))! {
-                button.transform.rotated(by: CGFloat(35))
-            }
-            button.addTarget(self, action: Selector(("setShotValue:")), for: UIControlEvents.touchUpInside)
+            button.transform = CGAffineTransform(rotationAngle: CGFloat(-24.9))
+            button.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
         }
-        self.bull.addTarget(self, action: Selector(("setShotValue:")), for: UIControlEvents.touchUpInside)
-        self.doubleBull.addTarget(self, action: Selector(("setShotValue:")), for: UIControlEvents.touchUpInside)
-        self.missButton.addTarget(self, action: Selector(("setShotValue:")), for: UIControlEvents.touchUpInside)
+        self.bull.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
+        self.doubleBull.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
+        self.missButton.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
         
         // add spin functions to buttons and swipes
         for button:UIButton in self.spinButtons {

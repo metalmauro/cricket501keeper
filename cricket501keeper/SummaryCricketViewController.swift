@@ -22,39 +22,37 @@ class SummaryCricketViewController: UIViewController {
     
     // set during initialization in GamePageViewController
     public var gameQueryInfo:String?
-    var delegate:CricketGameManager?
+    var gameManager:CricketGameManager?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.playerLabel.text = self.delegate?.player?.value(forKey: "username") as? String
-        self.opponentLabel.text = self.delegate?.opponent?.value(forKey: "username") as? String
+        self.playerLabel.text = self.gameManager?.player?.value(forKey: "username") as? String
+        self.opponentLabel.text = self.gameManager?.opponent?.value(forKey: "username") as? String
         
-        self.playerPointsLabel.text = String(format: "%d", self.delegate?.playerPoints?.value(forKey: "totalPoints") as! Int)
-        self.opponentPointsLabel.text = String(format: "%d", self.delegate?.opponentPoints?.value(forKey: "totalPoints") as! Int)
+        self.playerPointsLabel.text = String(format: "%d", self.gameManager?.playerPoints?.value(forKey: "totalPoints") as! Int)
+        self.opponentPointsLabel.text = String(format: "%d", self.gameManager?.opponentPoints?.value(forKey: "totalPoints") as! Int)
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if self.delegate == nil {
-            self.delegate = CricketGameManager(withGameID: self.gameQueryInfo!)
+        if self.gameManager == nil {
+            self.gameManager = CricketGameManager(withGameID: self.gameQueryInfo!)
         }
-        if self.delegate?.game != nil {
-            print("Cricket Game started at: ")
-            print(self.delegate?.game?.value(forKey: "timeStart") as! NSString)
-            
-            for image:UIImageView in self.playerFrames {
-                let sliceTitle = String(format: "p%d", image.tag)
-                let hits = self.delegate?.playerPoints?.value(forKey: sliceTitle) as? Int
-                image.image = self.setFrameImage(hits: hits!)
-            }
-            for image:UIImageView in self.opponentFrames {
-                let sliceTitle = String(format: "p%d", image.tag)
-                let hits = self.delegate?.opponentPoints?.value(forKey: sliceTitle) as? Int
-                image.image = self.setFrameImage(hits: hits!)
-            }
-            
+        print("Cricket Game started at: ")
+        print(self.gameManager?.game?.value(forKey: "timeStart") as! NSString)
+        
+        for image:UIImageView in self.playerFrames {
+            let sliceTitle = String(format: "p%d", image.tag)
+            let hits = self.gameManager?.playerPoints?.value(forKey: sliceTitle) as? Int
+            image.image = self.setFrameImage(hits: hits!)
         }
+        for image:UIImageView in self.opponentFrames {
+            let sliceTitle = String(format: "p%d", image.tag)
+            let hits = self.gameManager?.opponentPoints?.value(forKey: sliceTitle) as? Int
+            image.image = self.setFrameImage(hits: hits!)
+        }
+        
     }
     
     // used to find what UIImage to set for the frame images

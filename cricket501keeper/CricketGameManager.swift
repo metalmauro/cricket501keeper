@@ -111,76 +111,24 @@ class CricketGameManager: NSObject {
         super.init()
         let query = PFQuery(className: "GameCricket")
         var foundGame:PFObject?
+        query.fromLocalDatastore()
+        let gamesFound = try? query.findObjects()
+        foundGame = gamesFound?.last
         
-        query.fromPin(withName: withGameID)
-        query.findObjectsInBackground { (gamesFound, error) in
-            guard error == nil else {
-                print((error?.localizedDescription)!)
-                print("sorry about that. Failed to find game with that id (gameManager501)")
-                return
-            }
-            guard gamesFound != nil else {
-                print("games was nil for some reason (GM501)")
-                return
-            }
-            foundGame = (gamesFound?.last)!
-        }
         if foundGame != nil {
             self.game = foundGame
             self.playerPoints = foundGame?.object(forKey: "playerPoints") as! PFObject?
             self.opponentPoints = foundGame?.object(forKey: "opponentPoints") as! PFObject?
+            self.player = foundGame?.object(forKey: "player") as? PFUser
+            self.opponent = foundGame?.object(forKey: "opponent") as? PFUser
             if self.playerPoints == nil || self.opponentPoints == nil {
                 print("one of our points objects from the fetched Game is nil")
             }
         } else {
             print("foundGame was nil")
         }
-        if self.foundPlayers(foundGame!) == true {
-            print("got our players for the game (GM501)")
-        }
     }
     
-    // finds players for the game
-    func foundPlayers(_ game:PFObject) -> Bool {
-        var checking:Bool = false
-        guard game.parseClassName.isEqual("Game501") else {
-            print("game wasn't a 501 game")
-            return checking
-        }
-        let playerID = game.value(forKey: "playerID") as? String
-        let oppID = game.value(forKey: "opponentID") as? String
-        let pQuery = PFUser.query()
-        pQuery?.whereKey("objectId", equalTo: playerID!)
-        let oQuery = PFUser.query()
-        oQuery?.whereKey("objectId", equalTo: oppID!)
-        pQuery?.findObjectsInBackground(block: { (users, error) in
-            guard error == nil else {
-                print((error?.localizedDescription)!)
-                print("sorry about that. Failed to find player user with that id (gameManager501)")
-                return
-            }
-            guard users != nil else {
-                print("users was nil for some reason (GM501)")
-                return
-            }
-            self.player = users?.last as! PFUser?
-            checking = true
-        })
-        oQuery?.findObjectsInBackground(block: { (users, error) in
-            guard error == nil else {
-                print((error?.localizedDescription)!)
-                print("sorry about that. Failed to find opponent user with that id (gameManager501)")
-                return
-            }
-            guard users != nil else {
-                print("users was nil for some reason (GM501)")
-                return
-            }
-            self.opponent = users?.last as! PFUser?
-            checking = true
-        })
-        return checking
-    }
     func currentTurn() -> Int {
         return self.game?.object(forKey: "turnCounter") as! Int
     }

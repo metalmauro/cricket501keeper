@@ -88,20 +88,10 @@ class GameManager501: NSObject {
         super.init()
         let query = PFQuery(className: "Game501")
         var foundGame:PFObject?
+        query.fromLocalDatastore()
+        let gamesFound = try? query.findObjects()
+        foundGame = gamesFound?.last
         
-        query.fromPin(withName: withGameID)
-        query.findObjectsInBackground { (gamesFound, error) in
-            guard error == nil else {
-                print((error?.localizedDescription)!)
-                print("sorry about that. Failed to find game with that id (gameManager501)")
-                return
-            }
-            guard gamesFound != nil else {
-                print("games was nil for some reason (GM501)")
-                return
-            }
-            foundGame = (gamesFound?.last)!
-        }
         if foundGame != nil {
             self.game = foundGame
             self.player = foundGame?.object(forKey: "player") as? PFUser

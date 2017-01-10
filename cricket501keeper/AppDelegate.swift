@@ -14,24 +14,31 @@ import MMDrawerController
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     var window: UIWindow?
     var currentUser:PFUser?
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         let config = ParseClientConfiguration { (config) in
             config.applicationId = "cricket501Keeper"
             config.server = "http://cricket501keeper.herokuapp.com/parse"
+            config.isLocalDatastoreEnabled = true
         }
         Parse.initialize(with: config)
         let appDelegate  = UIApplication.shared.delegate as! AppDelegate
         let rootView = appDelegate.window!.rootViewController as! RootViewController
-        rootView.leftDrawerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "socialView")
-        rootView.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen")
-        rootView.openDrawerGestureModeMask = MMOpenDrawerGestureMode.all
-        rootView.closeDrawerGestureModeMask = MMCloseDrawerGestureMode.all
-        
+        self.currentUser = PFUser.current()
+        if self.currentUser == nil {
+            rootView.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "login")
+            rootView.openDrawerGestureModeMask = MMOpenDrawerGestureMode.all
+            rootView.closeDrawerGestureModeMask = MMCloseDrawerGestureMode.all
+        } else {
+            rootView.leftDrawerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "socialView")
+            rootView.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen")
+            rootView.openDrawerGestureModeMask = MMOpenDrawerGestureMode.all
+            rootView.closeDrawerGestureModeMask = MMCloseDrawerGestureMode.all
+        }
         return true
     }
     
