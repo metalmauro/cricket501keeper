@@ -24,28 +24,13 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.gamePicker.dataSource = self
         self.gamePicker.delegate = self
         
         self.currentUser = PFUser.current()
-        
-        
-        // having trouble with SocialViewController being added to the stack
-        
-        let social = SocialViewController(nibName: "SocialViewController", bundle: nil)
-        social.awakeFromNib()
-        let mainWindow = UIApplication.shared.keyWindow
-        
-        let frame = self.view.frame
-        let po = CGPoint(x: (frame.width)-40, y: 50)
-        
-        let rect = CGRect(
-            origin: po,
-            size: UIScreen.main.bounds.size)
-        mainWindow?.frame = rect
-        mainWindow?.addSubview(social.viewIfLoaded!)
-        
+        if self.currentUser == nil {
+            
+        }
     }
     
     @IBAction func indexChanged(_ sender: UISegmentedControl) {
@@ -129,7 +114,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             title = "New Game"
             break
         case 1:
-            title = "Continue"
+            title = "Continue From Last"
             break
         default:
             break
@@ -140,27 +125,6 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     //MARK: - Friends Delegate
     func addUserToGame(_user: PFUser) {
         self.opponent = _user
-    }
-    func moveSocialView(view:SocialViewController) {
-        if view.position == true {
-            let y = (view.view.bounds.minY)*2
-            view.view.bounds = CGRect(
-                x: view.view.bounds.minX,
-                y: y,
-                width: view.view.bounds.width,
-                height: view.view.bounds.height)
-        } else if view.position == false {
-            let y = (view.view.bounds.minY)/2
-            view.view.bounds = CGRect(
-                x: view.view.bounds.minX,
-                y: y,
-                width: view.view.bounds.width,
-                height: view.view.bounds.height)
-            
-        }
-        
-        
-        
     }
     
     //MARK: - Parse Game Creation
@@ -181,7 +145,6 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         }
         newGame["opponent"] = self.opponent
         newGame["turnCounter"] = 0
-        self.sendingGame = String(format: "501:%@", newGame.objectId!)
         
         // device owner points
         let p1Points = PFObject(className: "Pts501")
@@ -194,13 +157,13 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         self.pointsIteration(p2Points)
         p2Points["Player"] = self.opponent
         newGame["opponentPoints"] = p2Points
-        
         newGame.saveInBackground { (success, error) in
             if error != nil {
                 print((error?.localizedDescription)!)
                 print("sorry about that save attempt (ViewContoller-178)")
             }
         }
+        self.sendingGame = String(format: "501:%@%@", (self.currentUser?.objectId)!, (self.opponent?.objectId)!)
         newGame.pinInBackground(withName: self.sendingGame!) { (success, error) in
             if (error != nil) {
                 print((error?.localizedDescription)!)
@@ -232,7 +195,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         newGame["opponentPoints"] = p2Points
         
         newGame.saveInBackground()
-        self.sendingGame = String(format: "%@%@", (self.currentUser?.objectId)!, (self.opponent?.objectId)!)
+        self.sendingGame = String(format: "Cricket:%@%@", (self.currentUser?.objectId)!, (self.opponent?.objectId)!)
         newGame.pinInBackground(withName: self.sendingGame!) { (success, error) in
             if (error != nil) {
                 print((error?.localizedDescription)!)

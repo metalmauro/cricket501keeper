@@ -31,53 +31,17 @@ class TurnViewController: UIViewController {
         let rules = gameInfoArray?[0]
         
         guard (rules?.isEqual("501"))! else {
-            
-            let query = PFQuery(className: "GameCricket")
-            query.fromPin(withName: self.gameQueryInfo!)
-            query.findObjectsInBackground(block: { (games, error) in
-                guard error != nil else {
-                    print((error?.localizedDescription)!)
-                    print("sorry about that. Error finding it pinned (turnViewContoller-37)")
-                    return
-                }
-                self.game = games?.last
-                
-                self.player = PFUser.current()
-                let oppQuery = PFUser.query()
-                oppQuery?.whereKey("objectId", equalTo: self.game?["opponentID"]! as! String)
-            })
+            // is cricket game
+            if self.cricketGM == nil {
+                self.cricketGM = CricketGameManager(withGameID: self.gameQueryInfo!)
+            }
+            self.turnCounter = self.cricketGM?.currentTurn()
+            self.currentPlayerLabel.text = self.cricketGM?.currentPlayer()
             return
         }
-        let query = PFQuery(className: "Game501")
-        query.fromPin(withName: self.gameQueryInfo!)
-        query.findObjectsInBackground(block: { (games, error) in
-            guard error != nil else {
-                print((error?.localizedDescription)!)
-                print("sorry about that. Error finding it pinned (turnViewContoller-53)")
-                return
-            }
-            let total = games?.count
-            self.game = games?[total!-1]
-            
-            self.player = PFUser.current()
-            let oppQuery = PFUser.query()
-            oppQuery?.whereKey("objectId", equalTo: self.game?["opponentID"]! as! String)
-            oppQuery?.findObjectsInBackground(block: { (opponents, error) in
-                guard error != nil else {
-                    print((error?.localizedDescription)!)
-                    print("sorry about that. Error finding that userID from game information")
-                    return
-                }
-                self.opponent = opponents?.last as! PFUser?
-            })
-        })
-        // done fetching. self.game SHOULD be initialized
-        self.turnCounter = self.game?.value(forKey: "turnCounter") as! Int?
-        if ((self.turnCounter!)%2 == 0) {
-            self.currentPlayerLabel.text = self.opponent?["username"]! as! String?
-        }else{
-            self.currentPlayerLabel.text = self.player?["username"]! as! String?
-        }
+        // is 501 game
+        self.turnCounter = self.GM501?.currentTurn()
+        self.currentPlayerLabel.text = self.GM501?.currentPlayer()
     }
     
     //MARK: - ViewWillAppear
@@ -96,15 +60,14 @@ class TurnViewController: UIViewController {
         self.rules = array?[0]
         //add point values to the points in game
         guard (rules?.isEqual("501"))! else {
+            
             // cricket game
             // init cricketGM if there isn't one already
-            
             if self.cricketGM == nil {
                 self.cricketGM = CricketGameManager(withGameID: self.gameQueryInfo!)
             }
             // still need to relate organization of GM501 to cricketGM
-            guard (self.currentPlayerLabel.text?.isEqual(self.opponent?.value(forKey: "username") as! String))! &&
-                self.game?.object(forKey: "playerPoints") as? PFObject != nil else {
+            guard (self.currentPlayerLabel.text?.isEqual(self.opponent?.value(forKey: "username") as! String))! else {
                     // is player
                     self.addCricketPoints(self.game?.object(forKey: "playerPoints") as! PFObject)
                     let success = self.cricketGM?.earnedPoints(player: self.player!, points: self.game?.object(forKey: "playerPoints") as! PFObject)
@@ -119,6 +82,8 @@ class TurnViewController: UIViewController {
             if success == true {
                 print("success in viewWilAppear adding points to opponent of cricket game")
             }
+            
+            
             //check if game has ended due to point additions
             guard (self.cricketGM?.isGameOver())! else {
                 //game is still going
@@ -130,6 +95,7 @@ class TurnViewController: UIViewController {
             
             return
         }
+        
         //501 game
         // make 501 GM if there isnt one already
         if self.GM501 == nil {
@@ -137,20 +103,21 @@ class TurnViewController: UIViewController {
         }
         // which player is current
         guard (self.currentPlayerLabel.text?.isEqual(self.GM501?.currentPlayer()))! else {
-            // is player
+            // player is current
             self.add501Points((self.GM501?.playerPoints)!)
             if (self.GM501?.updatedPoints((self.GM501?.playerPoints)!))! {
                 print("success in viewWilAppear adding points to player of 501 game")
             }
             return
         }
-        // is the opponent
+        // opponent is current
         self.add501Points((self.GM501?.opponentPoints)!)
         if (self.GM501?.updatedPoints((self.GM501?.opponentPoints)!))! {
             print("success in viewWilAppear adding points to opponent of 501 game")
         }
+        
         // check if game has ended due to point additions
-        guard (self.GM501?.isGameOver())! else {
+        guard (self.GM501?.isGameOver(madeShots?.lastObject! as! String))! else {
             //game is still going on
             return
         }

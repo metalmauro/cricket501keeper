@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		9548402E1E22A3B6006FBF2C /* GameManager501.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9548402D1E22A3B6006FBF2C /* GameManager501.swift */; };
+		954840301E240BBA006FBF2C /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9548402F1E240BBA006FBF2C /* RootViewController.swift */; };
+		954840321E243033006FBF2C /* SocialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954840311E243033006FBF2C /* SocialViewController.swift */; };
 		95683AEB1E0D78190004F140 /* GamePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95683AEA1E0D78190004F140 /* GamePageViewController.swift */; };
 		95683AED1E0D78340004F140 /* ShotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95683AEC1E0D78340004F140 /* ShotViewController.swift */; };
 		95683AF11E0D785D0004F140 /* TurnViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95683AF01E0D785D0004F140 /* TurnViewController.swift */; };
@@ -19,8 +21,7 @@
 		95A29B0C1E142CAA00B926A6 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A29B0B1E142CAA00B926A6 /* LoginViewController.swift */; };
 		95A29B0E1E142CF800B926A6 /* Summary501ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A29B0D1E142CF800B926A6 /* Summary501ViewController.swift */; };
 		95A29B101E142D0200B926A6 /* SummaryCricketViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A29B0F1E142D0200B926A6 /* SummaryCricketViewController.swift */; };
-		95A29B1B1E157F8500B926A6 /* SocialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A29B191E157F8500B926A6 /* SocialViewController.swift */; };
-		95A29B1C1E157F8500B926A6 /* SocialViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 95A29B1A1E157F8500B926A6 /* SocialViewController.xib */; };
+		95A439991E24906E00B79D68 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A439981E24906E00B79D68 /* UserTableViewCell.swift */; };
 		95B722641E1C9B1D00E80203 /* CricketGameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B722631E1C9B1D00E80203 /* CricketGameManager.swift */; };
 		B57B6ED3F2BB4369FC39C9EF /* Pods_cricket501keeper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70FF9C09B5D38A6834C2A494 /* Pods_cricket501keeper.framework */; };
 /* End PBXBuildFile section */
@@ -29,6 +30,8 @@
 		297DBAF183F1F6CB0D696C39 /* Pods-cricket501keeper.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cricket501keeper.release.xcconfig"; path = "Pods/Target Support Files/Pods-cricket501keeper/Pods-cricket501keeper.release.xcconfig"; sourceTree = "<group>"; };
 		70FF9C09B5D38A6834C2A494 /* Pods_cricket501keeper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_cricket501keeper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9548402D1E22A3B6006FBF2C /* GameManager501.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameManager501.swift; sourceTree = "<group>"; };
+		9548402F1E240BBA006FBF2C /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		954840311E243033006FBF2C /* SocialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialViewController.swift; sourceTree = "<group>"; };
 		95683AEA1E0D78190004F140 /* GamePageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GamePageViewController.swift; sourceTree = "<group>"; };
 		95683AEC1E0D78340004F140 /* ShotViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShotViewController.swift; sourceTree = "<group>"; };
 		95683AF01E0D785D0004F140 /* TurnViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TurnViewController.swift; sourceTree = "<group>"; };
@@ -43,8 +46,7 @@
 		95A29B0B1E142CAA00B926A6 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		95A29B0D1E142CF800B926A6 /* Summary501ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Summary501ViewController.swift; sourceTree = "<group>"; };
 		95A29B0F1E142D0200B926A6 /* SummaryCricketViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SummaryCricketViewController.swift; sourceTree = "<group>"; };
-		95A29B191E157F8500B926A6 /* SocialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialViewController.swift; sourceTree = "<group>"; };
-		95A29B1A1E157F8500B926A6 /* SocialViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SocialViewController.xib; sourceTree = "<group>"; };
+		95A439981E24906E00B79D68 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		95B722631E1C9B1D00E80203 /* CricketGameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CricketGameManager.swift; sourceTree = "<group>"; };
 		E66FC1B0CBAC66F717C349A8 /* Pods-cricket501keeper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cricket501keeper.debug.xcconfig"; path = "Pods/Target Support Files/Pods-cricket501keeper/Pods-cricket501keeper.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -83,17 +85,18 @@
 			isa = PBXGroup;
 			children = (
 				956E8FBE1E0C2E550084F94F /* AppDelegate.swift */,
+				9548402F1E240BBA006FBF2C /* RootViewController.swift */,
+				95683AEA1E0D78190004F140 /* GamePageViewController.swift */,
+				954840311E243033006FBF2C /* SocialViewController.swift */,
+				95A439981E24906E00B79D68 /* UserTableViewCell.swift */,
 				956E8FC01E0C2E550084F94F /* ViewController.swift */,
 				95A29B0B1E142CAA00B926A6 /* LoginViewController.swift */,
-				95683AEA1E0D78190004F140 /* GamePageViewController.swift */,
 				95683AF01E0D785D0004F140 /* TurnViewController.swift */,
 				95683AEC1E0D78340004F140 /* ShotViewController.swift */,
 				9548402D1E22A3B6006FBF2C /* GameManager501.swift */,
 				95A29B0D1E142CF800B926A6 /* Summary501ViewController.swift */,
 				95B722631E1C9B1D00E80203 /* CricketGameManager.swift */,
 				95A29B0F1E142D0200B926A6 /* SummaryCricketViewController.swift */,
-				95A29B191E157F8500B926A6 /* SocialViewController.swift */,
-				95A29B1A1E157F8500B926A6 /* SocialViewController.xib */,
 				956E8FC21E0C2E550084F94F /* Main.storyboard */,
 				956E8FC81E0C2E550084F94F /* Assets.xcassets */,
 				956E8FCA1E0C2E550084F94F /* LaunchScreen.storyboard */,
@@ -187,7 +190,6 @@
 				956E8FCC1E0C2E550084F94F /* LaunchScreen.storyboard in Resources */,
 				956E8FC91E0C2E550084F94F /* Assets.xcassets in Resources */,
 				956E8FC41E0C2E550084F94F /* Main.storyboard in Resources */,
-				95A29B1C1E157F8500B926A6 /* SocialViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,12 +250,14 @@
 			files = (
 				956E8FC11E0C2E550084F94F /* ViewController.swift in Sources */,
 				9548402E1E22A3B6006FBF2C /* GameManager501.swift in Sources */,
+				954840301E240BBA006FBF2C /* RootViewController.swift in Sources */,
+				954840321E243033006FBF2C /* SocialViewController.swift in Sources */,
+				95A439991E24906E00B79D68 /* UserTableViewCell.swift in Sources */,
 				95B722641E1C9B1D00E80203 /* CricketGameManager.swift in Sources */,
 				95A29B101E142D0200B926A6 /* SummaryCricketViewController.swift in Sources */,
 				95683AED1E0D78340004F140 /* ShotViewController.swift in Sources */,
 				95683AEB1E0D78190004F140 /* GamePageViewController.swift in Sources */,
 				956E8FBF1E0C2E550084F94F /* AppDelegate.swift in Sources */,
-				95A29B1B1E157F8500B926A6 /* SocialViewController.swift in Sources */,
 				95A29B0E1E142CF800B926A6 /* Summary501ViewController.swift in Sources */,
 				95A29B0C1E142CAA00B926A6 /* LoginViewController.swift in Sources */,
 				95683AF11E0D785D0004F140 /* TurnViewController.swift in Sources */,
@@ -408,6 +412,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = kurokakari.cricket501keeper;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "cricket501keeper/cricket501keeper-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

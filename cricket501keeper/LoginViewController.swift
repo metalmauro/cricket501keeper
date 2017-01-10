@@ -10,8 +10,11 @@ import UIKit
 import SwiftKeychainWrapper
 import Parse
 
+protocol LoginDelegate {
+    func switchSideViews()
+}
+
 class LoginViewController: UIViewController, UITextFieldDelegate {
-    
     
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var usernameField: UITextField!
@@ -20,13 +23,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
-    
+    var delegate:LoginDelegate?
     var segmentIndex:Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.segmentIndex = 1
+        self.segmentIndex = 0
         self.segmentConfigure()
         
         let keychainUser:String? = KeychainWrapper.standard.string(forKey: "user")
@@ -36,14 +38,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         self.passwordField.text = keychainPassword
         self.passwordField.delegate = self
     }
-    
     func segmentConfigure() {
         switch self.segmentIndex!
         {
         case 0:
             self.emailField.isHidden = true
             self.emailLabel.isHidden = true
-            
             self.logButton.titleLabel?.text = "Log In"
             break
         case 1:
@@ -60,7 +60,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         self.segmentIndex = self.segmentedControl.selectedSegmentIndex
         self.segmentConfigure()
     }
-    
     @IBAction func buttonAction(_ sender: Any) {
         guard (self.usernameField.text?.isEqual(""))! || (self.passwordField.text?.isEqual(""))! else {
             //test has failed
@@ -79,7 +78,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             default:
                 break
             }
-            
             return
         }
         if (self.usernameField.text?.isEqual(""))! {
@@ -90,10 +88,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             self.passwordField.tintColor = UIColor.red
             self.passwordField.placeholder = "this space is required"
         }
-        
     }
     
-    
+    //MARK: - Make New Parse User
     func makeNewUser(_ name:String, email:String, password:String){
         let newUser = PFUser()
         newUser.username = name
@@ -104,7 +101,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         newUser.signUpInBackground { (success, error) in
             if let error = error {
-                let errorString = error.localizedDescription as NSString
+                let errorString = error.localizedDescription as String
                 print(errorString)
                 // Show the errorString somewhere and let the user try again.
             } else {
@@ -118,11 +115,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 if userKeySuccess == true && passWKeySuccess == true {
                     print("save to keychain was successful")
                 }
-                let mainView = self.storyboard?.instantiateViewController(withIdentifier: "mainScreen") as! ViewController
-                let window = UIApplication.shared.keyWindow!
-                window.rootViewController = mainView
-                self.present(mainView, animated: true, completion: nil)
-//                self.dismiss(animated: true, completion: nil)
+                self.dismiss(animated: true, completion: nil)
             }
         }
     }
@@ -143,15 +136,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 if userKeySuccess == true && passWKeySuccess == true {
                     print("save to keychain was successful")
                 }
-                let mainView = self.storyboard?.instantiateViewController(withIdentifier: "mainScreen") as! ViewController
-                let window = UIApplication.shared.keyWindow!
-                window.rootViewController = mainView
-                
                 self.dismiss(animated: true, completion: nil)
             }
         }
     }
-    
     //MARK: - TextField
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)

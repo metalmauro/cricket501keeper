@@ -1,50 +1,43 @@
 //
 //  SocialViewController.swift
+//  cricket501keeper
 //
-//
-//  Created by Matthew Mauro on 2016-12-29.
-//
+//  Created by Matthew Mauro on 2017-01-09.
+//  Copyright © 2017 Matthew Mauro. All rights reserved.
 //
 
 import UIKit
 import Parse
 
 //MARK: - FriendsList Protocol
-
 protocol FriendsListDelegate {
-    
     func addUserToGame(_user:PFUser)
-    func moveSocialView(view:SocialViewController)
 }
 
-class SocialViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SocialViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SocialCellDelegate {
     
-    @IBOutlet weak var friendsTable: UITableView!
     @IBOutlet weak var searchTable: UITableView!
+    @IBOutlet weak var friendsTable: UITableView!
     var currentUser:PFUser?
     var friendsList:Array<String>?
     var searchList:Array<String>?
     @IBOutlet weak var searchField: UITextField!
     
-    public var position:Bool?
     var gameController:FriendsListDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
-        guard PFUser.current() != nil else {
-            print("there is no Current User")
-            return
-        }
         self.friendsTable.dataSource = self
         self.friendsTable.delegate = self
         self.searchTable.dataSource = self
         self.searchTable.delegate = self
-        self.position = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        guard PFUser.current() != nil else{
+            print("there is no Current User (SocialVC)")
+            return
+        }
         self.currentUser = PFUser.current()
         self.friendsList = self.currentUser?.value(forKey: "friendsList") as? Array
     }
@@ -66,52 +59,45 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    //MARK: - TableView
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tableView == self.searchTable {
-            var array = self.currentUser?.value(forKey: "friendsList") as? Array<String>
-            let newFriend = self.searchList?[indexPath.row]
-            array?.append(newFriend! as String)
-            self.currentUser?.setValue(array, forKey: "friendsList")
-            currentUser?.saveInBackground()
-            self.friendsTable.reloadData()
-        }else{
-            let cell = tableView.cellForRow(at: indexPath)
-            guard cell?.isHighlighted == true else {
-                
-                // unselect rows
-                let totalRows = tableView.numberOfRows(inSection: 0)
-                for row in 0 ..< totalRows {
-                    let index = IndexPath(row: row, section: 0)
-                    tableView.deselectRow(at: index, animated: false)
-                }
-                //highlight Cell
-                cell?.backgroundColor = UIColor.green
-                cell?.isHighlighted = true
+    //MARK: - Cell functionality
+    func addFriend(_ username:String) {
+        self.friendsList?.append(username)
+        self.currentUser?["friendsList"] = self.friendsList
+        self.currentUser?.saveInBackground()
+    }
+    func addOpponent(_ username:String) {
+        let query = PFUser.query()
+        query?.whereKey("username", equalTo: username)
+        query?.findObjectsInBackground(block: { (users, error) in
+            guard error == nil else {
+                print("error adding Opponent (SocialVC)")
                 return
             }
-            // add User as player against you in game
-            let query = PFUser.query()
-            query?.whereKey("username", equalTo: (self.friendsList?[indexPath.row])!)
-            query?.findObjectsInBackground(block: { (objects, error) in
-                guard objects != nil else {
-                    if (error != nil) {
-                        print(error!.localizedDescription)
-                    }
-                    return
-                }
-                let user = objects?.first as! PFUser
-                self.gameController?.addUserToGame(_user: user)
-            })
+            self.gameController?.addUserToGame(_user: users?.last as! PFUser)
+        })
+    }
+    
+    
+    //MARK: - TableView
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard tableView == self.searchTable else {
+            // is the friends Table
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserTableViewCell
+            cell.setSelected(true, animated: false)
+            return
         }
+        // is the search table
+        let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell", for: indexPath) as! UserTableViewCell
+        cell.setSelected(true, animated: false)
     }
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = UIColor.clear
+        let cell = tableView.cellForRow(at: indexPath) as! UserTableViewCell
+        cell.isSelected = false
     }
-    func configureCell(_name:String) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.text = _name
+    func configureCell(_ name:String) -> UITableViewCell {
+        let cell = UserTableViewCell()
+        cell.titleLabel.text = name
+        cell.delegate = self
         return cell
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -121,7 +107,7 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
         }else{
             title = self.friendsList?[indexPath.row]
         }
-        return configureCell(_name: title!)
+        return configureCell(title!)
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == self.friendsTable {
@@ -132,7 +118,7 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
                 return count!
             }
         }else{
-            let count:Int? = (self.searchList?.count)!
+            let count:Int? = (self.searchList?.count)
             if count == nil {
                 return 0
             }else{
@@ -142,5 +128,11 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
+    }
+    
+    //MARK: - TextField
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
     }
 }

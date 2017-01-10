@@ -11,16 +11,29 @@ import Parse
 
 class Summary501ViewController: UIViewController {
 
+    @IBOutlet weak var playerLabel: UILabel!
+    @IBOutlet weak var opponentLabel: UILabel!
+    @IBOutlet weak var playerPts: UILabel!
+    @IBOutlet weak var oppPoints: UILabel!
+    
+    @IBOutlet weak var playerCloseOutHint: UITextView!
+    @IBOutlet weak var oppCloseOutHint: UITextView!
+    
     public var gameQueryInfo:String?
     var gm:GameManager501?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
-    
     override func viewWillAppear(_ animated: Bool) {
-        
+        if self.gm == nil {
+            self.gm = GameManager501(withGameID: self.gameQueryInfo!)
+        }
+        self.playerLabel.text = self.gm?.player?.username!
+        self.opponentLabel.text = self.gm?.opponent?.username!
+        self.playerPts.text = self.gm?.playerPoints?.value(forKey: "totalPoints") as? String
+        self.oppPoints.text = self.gm?.opponentPoints?.value(forKey: "totalPoints") as? String
+        self.playerCloseOutHint.text = self.gm?.stringToClose((self.gm?.playerPoints)!)
+        self.oppCloseOutHint.text = self.gm?.stringToClose((self.gm?.opponentPoints)!)
     }
 }

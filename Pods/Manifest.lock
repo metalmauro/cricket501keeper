@@ -1,21 +1,39 @@
 PODS:
   - Bolts/Tasks (1.8.4)
+  - MMDrawerController (0.6.0):
+    - MMDrawerController/Core (= 0.6.0)
+    - MMDrawerController/MMDrawerBarButtonItem (= 0.6.0)
+    - MMDrawerController/MMDrawerVisualStates (= 0.6.0)
+    - MMDrawerController/Subclass (= 0.6.0)
+  - MMDrawerController+Storyboard (0.0.2):
+    - MMDrawerController
+  - MMDrawerController/Core (0.6.0)
+  - MMDrawerController/MMDrawerBarButtonItem (0.6.0):
+    - MMDrawerController/Core
+  - MMDrawerController/MMDrawerVisualStates (0.6.0):
+    - MMDrawerController/Core
+  - MMDrawerController/Subclass (0.6.0):
+    - MMDrawerController/Core
   - NVActivityIndicatorView (3.0)
   - Parse (1.14.2):
     - Bolts/Tasks (~> 1.8)
   - SwiftKeychainWrapper (3.0.1)
 
 DEPENDENCIES:
+  - MMDrawerController
+  - MMDrawerController+Storyboard
   - NVActivityIndicatorView
   - Parse
   - SwiftKeychainWrapper
 
 SPEC CHECKSUMS:
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
+  MMDrawerController: e3a54a5570388463ad3b36975251575b50c4e1a0
+  MMDrawerController+Storyboard: c98f86c0f32cdef1d466d19a7da3ad2fc6c6ac00
   NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
   Parse: 4335d65f40cb3d43190d723144bbe1afb9c38230
   SwiftKeychainWrapper: 38952a3636320ae61bad3513cadd870929de7a4a
 
-PODFILE CHECKSUM: 0a3383bc570bc29de9263188be43e02d6326b889
+PODFILE CHECKSUM: a3d3dd12649870036f6d9269ee6faed0a5e7f22a
 
 COCOAPODS: 1.1.1

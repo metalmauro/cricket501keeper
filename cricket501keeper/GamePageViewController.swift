@@ -39,7 +39,7 @@ class GamePageViewController: UIPageViewController, UIPageViewControllerDataSour
             view.gameQueryInfo = self.gameQueryInfo
             return view
         case 1:
-            guard (self.rules?.isEqual("501"))! else {
+            guard (self.rules?.contains("501"))! else {
                 let summary = (storyboard?.instantiateViewController(withIdentifier: "cricketSummary") as! SummaryCricketViewController)
                 summary.gameQueryInfo = self.gameQueryInfo
                 return summary

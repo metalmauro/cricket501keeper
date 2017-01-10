@@ -9,5 +9,7 @@ target 'cricket501keeper' do
 	pod ‘Parse’
 pod 'NVActivityIndicatorView'
 pod ‘SwiftKeychainWrapper’
+pod ‘MMDrawerController'
+pod ‘MMDrawerController+Storyboard’
 
 end

@@ -18,7 +18,6 @@ class GameManager501: NSObject {
     var opponentPoints:PFObject?
     
     //MARK: Game fuctions
-    
     // update Point values
     func updatedPoints(_ points:PFObject) -> Bool {
         let currentPoints = points.value(forKey: "totalPoints") as! Int
@@ -54,11 +53,34 @@ class GameManager501: NSObject {
         return calculated
     }
     // check if game is over
-    func isGameOver() -> Bool {
+    func isGameOver(_ lastShot:String) -> Bool {
         guard self.playerPoints?.value(forKey: "totalPoints") as! Int != 0 || self.opponentPoints?.value(forKey: "totalPoints") as! Int != 0 else {
+            guard (lastShot.contains("*2")) else {
+                return false
+            }
             return true
         }
         return false
+    }
+    // increase game's TurnCounter and save
+    func stepTurnCounter() {
+        let turn = self.game?.value(forKey: "turnCounter") as? Int
+        self.game?["turnCounter"] = turn! + 1
+        self.game?.saveInBackground()
+    }
+    func currentTurn() -> Int {
+        return self.game?.object(forKey: "turnCounter") as! Int
+    }
+    func currentPlayer() -> String {
+        if self.currentTurn() % 2 == 0 {
+            return self.opponent?.value(forKey: "username") as! String
+        } else {
+            return self.player?.value(forKey: "username") as! String
+        }
+    }
+    func gameHasEnded() {
+        self.game?["timeEnd"] = Date()
+        self.game?.saveInBackground()
     }
     
     // MARK: Custom Init and Parse fetching
@@ -82,63 +104,19 @@ class GameManager501: NSObject {
         }
         if foundGame != nil {
             self.game = foundGame
-            self.playerPoints = foundGame?.object(forKey: "playerPoints") as! PFObject?
-            self.opponentPoints = foundGame?.object(forKey: "opponentPoints") as! PFObject?
+            self.player = foundGame?.object(forKey: "player") as? PFUser
+            self.opponent = foundGame?.object(forKey: "opponent") as? PFUser
+            self.playerPoints = foundGame?.object(forKey: "playerPoints") as? PFObject
+            self.opponentPoints = foundGame?.object(forKey: "opponentPoints") as? PFObject
             if self.playerPoints == nil || self.opponentPoints == nil {
                 print("one of our points objects from the fetched Game is nil")
             }
         } else {
             print("foundGame was nil")
         }
-        if self.foundPlayers(foundGame!) == true {
-            print("got our players for the game (GM501)")
-        }
-    }
-    
-    // finds players for the game
-    func foundPlayers(_ game:PFObject) -> Bool {
-        var checking:Bool = false
-        guard game.parseClassName.isEqual("Game501") else {
-            print("game wasn't a 501 game")
-            return checking
-        }
-        let playerID = game.value(forKey: "playerID") as? String
-        let oppID = game.value(forKey: "opponentID") as? String
-        let pQuery = PFUser.query()
-        pQuery?.whereKey("objectId", equalTo: playerID!)
-        let oQuery = PFUser.query()
-        oQuery?.whereKey("objectId", equalTo: oppID!)
-        pQuery?.findObjectsInBackground(block: { (users, error) in
-            guard error == nil else {
-                print((error?.localizedDescription)!)
-                print("sorry about that. Failed to find player user with that id (gameManager501)")
-                return
-            }
-            guard users != nil else {
-                print("users was nil for some reason (GM501)")
-                return
-            }
-            self.player = users?.last as! PFUser?
-            checking = true
-        })
-        oQuery?.findObjectsInBackground(block: { (users, error) in
-            guard error == nil else {
-                print((error?.localizedDescription)!)
-                print("sorry about that. Failed to find opponent user with that id (gameManager501)")
-                return
-            }
-            guard users != nil else {
-                print("users was nil for some reason (GM501)")
-                return
-            }
-            self.opponent = users?.last as! PFUser?
-            checking = true
-        })
-        return checking
     }
     
     //MARK: Checkout Chart
-    
     // yeah this function is long. Either that or a dictionary would be long
     func stringToClose(_ points:PFObject) -> String {
         let currentPoints = points.value(forKey: "totalPoints") as! Int
@@ -483,19 +461,5 @@ class GameManager501: NSObject {
         default:
             return "Keep Scoring Points! (still no easy way out)"
         }
-    }
-    func currentTurn() -> Int {
-        return self.game?.object(forKey: "turnCounter") as! Int
-    }
-    func currentPlayer() -> String {
-        if self.currentTurn() % 2 == 0 {
-            return self.opponent?.value(forKey: "username") as! String
-        } else {
-            return self.player?.value(forKey: "username") as! String
-        }
-    }
-    func gameHasEnded() {
-        self.game?["timeEnd"] = Date()
-        self.game?.saveInBackground()
     }
 }

@@ -10,6 +10,7 @@ import UIKit
 
 import Parse
 import SwiftKeychainWrapper
+import MMDrawerController
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -24,22 +25,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             config.server = "http://cricket501keeper.herokuapp.com/parse"
         }
         Parse.initialize(with: config)
-        
-        self.currentUser = PFUser.current()
-        if self.currentUser == nil {
-            let login:LoginViewController = (UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "login") as! LoginViewController)
-            self.window = UIWindow(frame: UIScreen.main.bounds)
-            self.window?.rootViewController = login
-            self.window?.makeKeyAndVisible()
-            
-        }else{
-            
-            let mainScreen:ViewController = (UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen") as! ViewController)
-            self.window = UIWindow(frame: UIScreen.main.bounds)
-            self.window?.rootViewController = mainScreen
-            self.window?.makeKeyAndVisible()
-            
-        }
+        let appDelegate  = UIApplication.shared.delegate as! AppDelegate
+        let rootView = appDelegate.window!.rootViewController as! RootViewController
+        rootView.leftDrawerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "socialView")
+        rootView.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen")
+        rootView.openDrawerGestureModeMask = MMOpenDrawerGestureMode.all
+        rootView.closeDrawerGestureModeMask = MMCloseDrawerGestureMode.all
         
         return true
     }
