@@ -35,8 +35,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             rootView.openDrawerGestureModeMask = MMOpenDrawerGestureMode.all
             rootView.closeDrawerGestureModeMask = MMCloseDrawerGestureMode.all
         } else {
-            rootView.leftDrawerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "socialView")
-            rootView.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen")
+            let mainScreen = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen") as! ViewController
+            let social = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "socialView") as! SocialViewController
+            social.gameController = mainScreen
+            rootView.leftDrawerViewController = social
+            rootView.centerViewController = mainScreen
             rootView.openDrawerGestureModeMask = MMOpenDrawerGestureMode.all
             rootView.closeDrawerGestureModeMask = MMCloseDrawerGestureMode.all
         }

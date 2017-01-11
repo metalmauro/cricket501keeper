@@ -1,4 +1,4 @@
-//
+    //
 //  ViewController.swift
 //  cricket501keeper
 //
@@ -64,11 +64,9 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         switch (self.gameTypeControl.selectedSegmentIndex) {
         case 0:
             self.createCricket()
-            self.performSegue(withIdentifier: "playGame", sender: self)
             break
         case 1:
             self.create501()
-            self.performSegue(withIdentifier: "playGame", sender: self)
             break
         default:
             break
@@ -129,8 +127,9 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     }
     
     //MARK: - Friends Delegate
-    func addUserToGame(_user: PFUser) {
-        self.opponent = _user
+    func addUserToGame(_ user: PFUser) {
+        self.opponent = user
+        print("Added Opponent (mainScreenVC)")
     }
     
     //MARK: - Parse Game Creation
@@ -141,15 +140,33 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     // current Game will be pinned to the device, allowing for easier reference moving forward
     // subsequent View Controllers will fetch the saved game and then use and save data appropriately
     
+    /*
+     Games have these Keys we MUST SET properly
+     
+     playerPoints (Pointer)
+     opponentPoints (Pointer)
+     userPlayers (Relation)
+     locals (Relation)
+     turnCounter
+     timeStart
+     timeEnd
+     
+     */
+    
     func create501() {
         let newGame = PFObject(className: "Game501")
         newGame["timeStart"] = Date()
-        newGame["player"] = self.currentUser
         
+        let playerRelations = newGame.relation(forKey: "userPlayers")
+        let localRelations = newGame.relation(forKey: "locals")
         if self.opponent == nil {
-            self.makeTempOpponent()
+            self.makeTempOpponent(newGame)
+            playerRelations.add(self.currentUser!)
+            localRelations.add(self.opponent!)
+        } else {
+            playerRelations.add(self.currentUser!)
+            playerRelations.add(self.opponent!)
         }
-        newGame["opponent"] = self.opponent
         newGame["turnCounter"] = 1
         
         // device owner points
@@ -157,67 +174,72 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         self.pointsIteration(p1Points)
         p1Points["Player"] = self.currentUser
         newGame["playerPoints"] = p1Points
-        
         // their friend's points
         let p2Points = PFObject(className: "Pts501")
         self.pointsIteration(p2Points)
         p2Points["Player"] = self.opponent
         newGame["opponentPoints"] = p2Points
+        
+        // testing which method works better, this or the Cricket method
         newGame.saveInBackground { (success, error) in
             if let error = error {
                 print((error.localizedDescription))
-                print("sorry about that pin attempt (ViewContoller-184)")
+                print("sorry about that save attempt (ViewContoller-184)")
             } else {
                 print("Game saved")
-            }
-        }
-        self.sendingGame = String(format: "501:%@v%@", (self.currentUser?.username)!, (self.opponent?.value(forKey: "username") as! String))
-        newGame.pinInBackground(withName: self.sendingGame!) { (success, error) in
-            if let error = error {
-                print((error.localizedDescription))
-                print("sorry about that pin attempt (ViewContoller-184)")
-            } else {
-                print("Game pinned")
+                self.sendingGame = String(format: "501:%@v%@", (self.currentUser?.username)!, (self.opponent?.value(forKey: "username") as! String))
+                newGame.pinInBackground(withName: self.sendingGame!) { (success, error) in
+                    if let error = error {
+                        print((error.localizedDescription))
+                        print("sorry about that pin attempt (ViewContoller-184)")
+                    } else {
+                        print("Game pinned, Play Game!")
+                        self.performSegue(withIdentifier: "playGame", sender: self)
+                    }
+                }
             }
         }
     }
     func createCricket(){
         let newGame = PFObject(className: "GameCricket")
         newGame["timeStart"] = Date()
-        newGame["player"] = self.currentUser
+        
+        let playerRelations = newGame.relation(forKey: "userPlayers")
+        
         if self.opponent == nil {
-            self.makeTempOpponent()
+            self.makeTempOpponent(newGame)
+            playerRelations.add(self.currentUser!)
+        } else {
+            playerRelations.add(self.currentUser!)
+            playerRelations.add(self.opponent!)
         }
-        newGame["opponent"] = self.opponent
-        newGame["turnCounter"] = 0
+        newGame["turnCounter"] = 1
         
         // device owner points
         let p1Points = PFObject(className: "PtsC")
         self.pointsIteration(p1Points)
         p1Points["Player"] = self.currentUser
         newGame["playerPoints"] = p1Points
-        
         // their friend's points
         let p2Points = PFObject(className: "PtsC")
         self.pointsIteration(p2Points)
         p2Points["Player"] = self.opponent
         newGame["opponentPoints"] = p2Points
-        
+        // testing which method works better, this or the 501 method
         newGame.saveInBackground { (success, error) in
-            if let error = error {
-                print((error.localizedDescription))
-                print("sorry about that pin attempt (ViewContoller-184)")
-            } else {
-                print("Game saved")
+            guard success == true else {
+                print("wasn't successful saving")
+                return
             }
-        }
-        self.sendingGame = String(format: "Cricket:%@v%@", (self.currentUser?.username)!, (self.opponent?.value(forKey: "username"))! as! String)
-        newGame.pinInBackground(withName: self.sendingGame!) { (success, error) in
-            if let error = error {
-                print((error.localizedDescription))
-                print("sorry about that pin attempt (ViewContoller-184)")
-            } else {
-                print("Game pinned")
+            print("successful saving")
+            self.sendingGame = String(format: "Cricket:%@v%@", (self.currentUser?.username)!, (self.opponent?.value(forKey: "username"))! as! String)
+            newGame.pinInBackground(withName: self.sendingGame!) { (success, error) in
+                guard success == true else {
+                    print("unsuccessful pin attempt")
+                    return
+                }
+                print("successful pin, Play Game!")
+                self.performSegue(withIdentifier: "playGame", sender: self)
             }
         }
     }
@@ -236,6 +258,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             points["p25"] = 0
             points["p0"] = 0
             points["totalPoints"] = 0
+            points.saveInBackground()
             return
         }
         // it's a 501 game
@@ -245,6 +268,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         }
         points["p25"] = 0
         points["totalPoints"] = 501
+        points.saveInBackground()
     }
     
     //MARK: - Parse fetching functions
@@ -289,13 +313,51 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     }
     
     //MARK: - TemporaryOpponent
-    func makeTempOpponent(){
-        let newUser = PFObject(className: "LocalOpp")
+    func makeTempOpponent(_ game:PFObject) {
+//        print("opponent was nil, making temporary")
+//        guard ((self.currentUser?.relation(forKey: "Locals")) == nil) else {
+//            var opponent:PFObject?
+//            let relation = self.currentUser?.relation(forKey: "Locals")
+//            relation?.query().findObjectsInBackground(block: { (objects, error) in
+//                if let error = error {
+//                    print(error.localizedDescription)
+//                    print("error finding our LocalOpp object from relation (mainScreenVC)")
+//                } else {
+//                    print("found localOpp")
+//                    opponent = objects?.first
+//                    
+//                }
+//            })
+//            return
+//        }
+//        let newUser = PFObject(className: "localOpp")
+//        newUser["username"] = "Opponent"
+//        newUser["creator"] = self.currentUser!
+//        newUser.saveInBackground()
+        guard game.parseClassName.contains("Game") else {
+            print("submitted game is of wrong class")
+            return
+        }
+        print("making temp opponent for game")
+        guard self.currentUser?.relation(forKey: "Locals") == nil else {
+            // relation is not nil, get the object from that and add to game
+            let relation = self.currentUser?.relation(forKey: "Locals")
+            relation?.query().getFirstObjectInBackground(block: { (object, error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                    print("error finding our LocalOpp object from relation (mainScreenVC)")
+                } else {
+                    print("found Object in User's relation")
+                    game["locals"] = object
+                }
+            })
+        }
+        // relation was nil, add localOpp
+        let newUser = PFObject(className: "localOpp")
         newUser["username"] = "Opponent"
         newUser["creator"] = self.currentUser!
-        
         newUser.saveInBackground()
-        self.opponent = newUser
+        game["locals"] = newUser
     }
 }
 

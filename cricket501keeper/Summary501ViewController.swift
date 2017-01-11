@@ -30,7 +30,7 @@ class Summary501ViewController: UIViewController {
             self.gm = GameManager501(withGameID: self.gameQueryInfo!)
         }
         self.playerLabel.text = self.gm?.player?.username!
-        self.opponentLabel.text = self.gm?.opponent?.username!
+        self.opponentLabel.text = self.gm?.opponent?.value(forKey: "username") as? String
         self.playerPts.text = self.gm?.playerPoints?.value(forKey: "totalPoints") as? String
         self.oppPoints.text = self.gm?.opponentPoints?.value(forKey: "totalPoints") as? String
         self.playerCloseOutHint.text = self.gm?.stringToClose((self.gm?.playerPoints)!)

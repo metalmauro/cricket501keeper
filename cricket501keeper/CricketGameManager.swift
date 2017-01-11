@@ -14,7 +14,7 @@ class CricketGameManager: NSObject {
     var game:PFObject?
     var player:PFUser?
     var playerPoints:PFObject?
-    var opponent:PFUser?
+    var opponent:PFObject?
     var opponentPoints:PFObject?
     
     //MARK: Cricket Rulings funcitons
@@ -116,10 +116,33 @@ class CricketGameManager: NSObject {
         foundGame = gamesFound?.last
         if foundGame != nil {
             self.game = foundGame
-            self.player = foundGame?.object(forKey: "player") as? PFUser
-            self.player?.fetchIfNeededInBackground()
-            self.opponent = foundGame?.object(forKey: "opponent") as? PFUser
-            self.opponent?.fetchIfNeededInBackground()
+            let playerRelations = foundGame?.relation(forKey: "userPlayers")
+            playerRelations?.query().findObjectsInBackground(block: { (objects, error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                    print("couldn't find objects from relations")
+                } else {
+                    guard (objects?.count)! == 2 else {
+                        self.player = objects?.first as? PFUser
+                        return
+                    }
+                    self.player = objects?.first as? PFUser
+                    self.opponent = objects?.last as? PFUser
+                }
+            })
+            let localRelations = foundGame?.relation(forKey: "locals")
+            localRelations?.query().findObjectsInBackground(block: { (objects, error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                    print("couldn't find objects from relations")
+                } else {
+                    guard (objects?.count)! > 0 else {
+                        print("no temp opponents in this game")
+                        return
+                    }
+                    self.opponent = (objects?.first)! as PFObject
+                }
+            })
             self.playerPoints = foundGame?.object(forKey: "playerPoints") as? PFObject
             self.playerPoints?.fetchIfNeededInBackground()
             self.opponentPoints = foundGame?.object(forKey: "opponentPoints") as? PFObject

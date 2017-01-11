@@ -184,7 +184,7 @@
                             </textField>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="black" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="ejh-zo-tF2">
                                 <rect key="frame" x="14.5" y="89" width="345" height="222"/>
-                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.08993590962417608" green="0.1274922794912296" blue="0.22986619015957444" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="ejh-zo-tF2" secondAttribute="height" multiplier="171:110" id="icC-dE-UqL"/>
                                 </constraints>
@@ -200,14 +200,14 @@
                                                     <rect key="frame" x="15" y="4" width="34" height="21"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="1" green="0.99496490947319516" blue="0.99480945924208075" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="EKK-pI-vUB">
-                                                    <rect key="frame" x="15" y="25" width="44" height="15"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Play Against Them!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="EKK-pI-vUB">
+                                                    <rect key="frame" x="15" y="25" width="109" height="15"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <color key="textColor" red="1" green="0.99496490950000005" blue="0.99480945919999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Shd-63-6BP">
@@ -220,7 +220,7 @@
                                             </subviews>
                                             <color key="backgroundColor" red="0.53332779259999996" green="0.53332779259999996" blue="0.53332779259999996" alpha="1" colorSpace="calibratedRGB"/>
                                         </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                         <connections>
                                             <outlet property="checkButton" destination="Shd-63-6BP" id="Nsw-bW-VMk"/>
                                             <outlet property="detailLabel" destination="EKK-pI-vUB" id="yXg-6k-fvc"/>
@@ -243,7 +243,7 @@
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="cc9-sW-f48">
                                 <rect key="frame" x="15" y="388" width="345" height="223"/>
-                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.089935909620000004" green="0.1274922795" blue="0.22986619019999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="cc9-sW-f48" secondAttribute="height" multiplier="345:223" id="3SJ-cV-hEC"/>
                                 </constraints>
@@ -259,14 +259,14 @@
                                                     <rect key="frame" x="15" y="4" width="34" height="21"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="1" green="0.99496490950000005" blue="0.99480945919999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BGs-dW-eRP">
                                                     <rect key="frame" x="15" y="25" width="44" height="15"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <color key="textColor" red="1" green="0.99496490950000005" blue="0.99480945919999997" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jA3-uH-EHc">
@@ -276,7 +276,7 @@
                                             </subviews>
                                             <color key="backgroundColor" red="0.53332779259999996" green="0.53332779259999996" blue="0.53332779259999996" alpha="1" colorSpace="calibratedRGB"/>
                                         </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                         <connections>
                                             <outlet property="checkButton" destination="jA3-uH-EHc" id="guE-cP-zcY"/>
                                             <outlet property="detailLabel" destination="BGs-dW-eRP" id="HBk-nK-5sb"/>
@@ -304,7 +304,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" red="0.25609139516843971" green="0.25609139516843971" blue="0.25609139516843971" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="0.12190490217566052" green="0.17281121550309442" blue="0.31157538231382975" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="cc9-sW-f48" firstAttribute="centerX" secondItem="13M-hT-VCe" secondAttribute="centerX" id="5uS-KL-cIY"/>
                             <constraint firstItem="Jza-Um-5Rm" firstAttribute="top" secondItem="16M-o4-xEJ" secondAttribute="bottom" constant="30" id="9Me-9a-wKm"/>

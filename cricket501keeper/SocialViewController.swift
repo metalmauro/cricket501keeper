@@ -11,10 +11,10 @@ import Parse
 
 //MARK: - FriendsList Protocol
 protocol FriendsListDelegate {
-    func addUserToGame(_user:PFUser)
+    func addUserToGame(_ user:PFUser)
 }
 
-class SocialViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SocialCellDelegate, SeachCellDelegate {
+class SocialViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SocialCellDelegate, SearchCellDelegate {
     
     @IBOutlet weak var searchTable: UITableView!
     @IBOutlet weak var friendsTable: UITableView!
@@ -23,7 +23,7 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
     var searchList:Array<String>?
     @IBOutlet weak var searchField: UITextField!
     @IBOutlet weak var userLabel: UILabel!
-    
+    var refreshControl:UIRefreshControl?
     @IBOutlet weak var signOutButton: UIButton!
     var gameController:FriendsListDelegate?
     
@@ -33,6 +33,18 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
             print("there is no Current User (SocialVC)")
             return
         }
+        self.refreshControl = UIRefreshControl()
+        let main_string = "Pull to Refresh"
+        let string_to_color = "Pull to Refresh"
+        let range = (main_string as NSString).range(of: string_to_color)
+        let attributedString = NSMutableAttributedString(string:main_string)
+        attributedString.addAttribute(NSForegroundColorAttributeName, value: UIColor.white , range: range)
+        
+        self.refreshControl?.attributedTitle = attributedString
+        self.refreshControl?.addTarget(self, action: #selector(SocialViewController.refreshTableView(_:)), for: UIControlEvents.valueChanged)
+        self.friendsTable?.addSubview(refreshControl!)
+        
+        
         self.currentUser = PFUser.current()
         self.friendsList = self.currentUser?.value(forKey: "friendsList") as? Array
         self.searchList = [""]
@@ -83,8 +95,15 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
     func addOpponent(_ username:String) {
         let query = PFUser.query()
         query?.whereKey("username", equalTo: username)
-        let user = try? query?.getFirstObject() as! PFUser
-        self.gameController?.addUserToGame(_user: user!)
+        query?.findObjectsInBackground(block: { (objects, error) in
+            if let error = error {
+                print(error.localizedDescription)
+                print("failed to Add opponent (SocialVC)")
+            } else {
+                print("Added Opp (socialVC)")
+                self.gameController?.addUserToGame(objects?.last as! PFUser)
+            }
+        })
     }
     
     
@@ -92,17 +111,33 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard tableView == self.searchTable else {
             // is the friends Table
-            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! UserTableViewCell
+            
+            let cell = tableView.cellForRow(at: indexPath) as! UserTableViewCell
+            guard cell.select != false else {
+                tableView.deselectRow(at: indexPath, animated: false)
+                return
+            }
             cell.setSelected(true, animated: false)
             return
         }
         // is the search table
-        let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell", for: indexPath) as! SearchTableViewCell
+        let cell = tableView.cellForRow(at: indexPath) as! SearchTableViewCell
+        guard cell.select != false else {
+            tableView.deselectRow(at: indexPath, animated: false)
+            return
+        }
         cell.setSelected(true, animated: false)
     }
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as! UserTableViewCell
-        cell.isSelected = false
+        guard tableView == self.searchTable else {
+            // is the friends Table
+            let cell = tableView.cellForRow(at: indexPath) as! UserTableViewCell
+            cell.setSelected(false, animated: false)
+            return
+        }
+        // is the search table
+        let cell = tableView.cellForRow(at: indexPath) as! SearchTableViewCell
+        cell.setSelected(false, animated: false)
     }
     //MARK: - Configure Cell
     func configureCell(_ name:String, _ tableView:UITableView) -> UITableViewCell {
@@ -117,6 +152,13 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
         cell.delegate = self
         return cell
     }
+    func refreshTableView(_ sender:Any) {
+        self.currentUser?.fetchInBackground()
+        self.friendsList = self.currentUser?.object(forKey: "friendsList") as? Array<String>
+        self.friendsTable.reloadData()
+        self.refreshControl?.endRefreshing()
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var title:String?
         guard tableView != self.searchTable else {
@@ -145,15 +187,14 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
         }
         return count! as Int
     }
-    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        guard tableView == friendsTable else {
-            if (self.searchField.text?.isEmpty)! {
-                return [""]
-            } else {
-                return ["Results"]
-            }
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard tableView == self.searchTable else {
+            return "Friends"
         }
-        return ["Friends"]
+        guard (self.searchField.text?.isEmpty)! else {
+            return "Search Results"
+        }
+        return ""
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
