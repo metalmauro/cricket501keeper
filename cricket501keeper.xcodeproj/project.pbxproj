@@ -22,6 +22,7 @@
 		95A29B0E1E142CF800B926A6 /* Summary501ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A29B0D1E142CF800B926A6 /* Summary501ViewController.swift */; };
 		95A29B101E142D0200B926A6 /* SummaryCricketViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A29B0F1E142D0200B926A6 /* SummaryCricketViewController.swift */; };
 		95A439991E24906E00B79D68 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A439981E24906E00B79D68 /* UserTableViewCell.swift */; };
+		95A4399B1E25AE6600B79D68 /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A4399A1E25AE6600B79D68 /* SearchTableViewCell.swift */; };
 		95B722641E1C9B1D00E80203 /* CricketGameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B722631E1C9B1D00E80203 /* CricketGameManager.swift */; };
 		B57B6ED3F2BB4369FC39C9EF /* Pods_cricket501keeper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70FF9C09B5D38A6834C2A494 /* Pods_cricket501keeper.framework */; };
 /* End PBXBuildFile section */
@@ -47,6 +48,7 @@
 		95A29B0D1E142CF800B926A6 /* Summary501ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Summary501ViewController.swift; sourceTree = "<group>"; };
 		95A29B0F1E142D0200B926A6 /* SummaryCricketViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SummaryCricketViewController.swift; sourceTree = "<group>"; };
 		95A439981E24906E00B79D68 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
+		95A4399A1E25AE6600B79D68 /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
 		95B722631E1C9B1D00E80203 /* CricketGameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CricketGameManager.swift; sourceTree = "<group>"; };
 		E66FC1B0CBAC66F717C349A8 /* Pods-cricket501keeper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cricket501keeper.debug.xcconfig"; path = "Pods/Target Support Files/Pods-cricket501keeper/Pods-cricket501keeper.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -86,11 +88,12 @@
 			children = (
 				956E8FBE1E0C2E550084F94F /* AppDelegate.swift */,
 				9548402F1E240BBA006FBF2C /* RootViewController.swift */,
-				95683AEA1E0D78190004F140 /* GamePageViewController.swift */,
+				956E8FC01E0C2E550084F94F /* ViewController.swift */,
 				954840311E243033006FBF2C /* SocialViewController.swift */,
 				95A439981E24906E00B79D68 /* UserTableViewCell.swift */,
-				956E8FC01E0C2E550084F94F /* ViewController.swift */,
+				95A4399A1E25AE6600B79D68 /* SearchTableViewCell.swift */,
 				95A29B0B1E142CAA00B926A6 /* LoginViewController.swift */,
+				95683AEA1E0D78190004F140 /* GamePageViewController.swift */,
 				95683AF01E0D785D0004F140 /* TurnViewController.swift */,
 				95683AEC1E0D78340004F140 /* ShotViewController.swift */,
 				9548402D1E22A3B6006FBF2C /* GameManager501.swift */,
@@ -261,6 +264,7 @@
 				95A29B0E1E142CF800B926A6 /* Summary501ViewController.swift in Sources */,
 				95A29B0C1E142CAA00B926A6 /* LoginViewController.swift in Sources */,
 				95683AF11E0D785D0004F140 /* TurnViewController.swift in Sources */,
+				95A4399B1E25AE6600B79D68 /* SearchTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

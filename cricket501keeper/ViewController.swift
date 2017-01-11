@@ -291,7 +291,8 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     //MARK: - TemporaryOpponent
     func makeTempOpponent(){
         let newUser = PFObject(className: "LocalOpp")
-        newUser["username"] = "LocalOpponent"
+        newUser["username"] = "Opponent"
+        newUser["creator"] = self.currentUser!
         
         newUser.saveInBackground()
         self.opponent = newUser

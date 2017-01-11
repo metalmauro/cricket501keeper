@@ -95,9 +95,13 @@ class GameManager501: NSObject {
         if foundGame != nil {
             self.game = foundGame
             self.player = foundGame?.object(forKey: "player") as? PFUser
+            self.player?.fetchIfNeededInBackground()
             self.opponent = foundGame?.object(forKey: "opponent") as? PFUser
+            self.opponent?.fetchIfNeededInBackground()
             self.playerPoints = foundGame?.object(forKey: "playerPoints") as? PFObject
+            self.playerPoints?.fetchIfNeededInBackground()
             self.opponentPoints = foundGame?.object(forKey: "opponentPoints") as? PFObject
+            self.opponentPoints?.fetchIfNeededInBackground()
             if self.playerPoints == nil || self.opponentPoints == nil {
                 print("one of our points objects from the fetched Game is nil")
             }

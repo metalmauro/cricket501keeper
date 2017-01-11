@@ -14,7 +14,7 @@ protocol FriendsListDelegate {
     func addUserToGame(_user:PFUser)
 }
 
-class SocialViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SocialCellDelegate {
+class SocialViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SocialCellDelegate, SeachCellDelegate {
     
     @IBOutlet weak var searchTable: UITableView!
     @IBOutlet weak var friendsTable: UITableView!
@@ -35,6 +35,7 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
         }
         self.currentUser = PFUser.current()
         self.friendsList = self.currentUser?.value(forKey: "friendsList") as? Array
+        self.searchList = [""]
         self.friendsTable.dataSource = self
         self.friendsTable.delegate = self
         self.searchTable.dataSource = self
@@ -42,15 +43,15 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
         self.userLabel.text = self.currentUser?.username
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        guard PFUser.current() != nil else{
-//            print("there is no Current User (SocialVC)")
-//            return
-//        }
-//        self.currentUser = PFUser.current()
-//        self.friendsList = self.currentUser?.value(forKey: "friendsList") as? Array
-//    }
-//    
+    override func viewWillAppear(_ animated: Bool) {
+        guard PFUser.current() != nil else{
+            print("there is no Current User (SocialVC)")
+            return
+        }
+        self.currentUser = PFUser.current()
+        self.friendsList = self.currentUser?.value(forKey: "friendsList") as? Array
+    }
+    //MARK: - Search for User
     @IBAction func search(_ sender: Any) {
         let query:PFQuery = PFUser.query()!
         query.whereKey("username", contains: self.searchField.text)
@@ -96,44 +97,63 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
             return
         }
         // is the search table
-        let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell", for: indexPath) as! UserTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell", for: indexPath) as! SearchTableViewCell
         cell.setSelected(true, animated: false)
     }
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserTableViewCell
         cell.isSelected = false
     }
-    func configureCell(_ name:String) -> UITableViewCell {
-        let cell = UserTableViewCell()
-        cell.titleLabel.text = name
+    //MARK: - Configure Cell
+    func configureCell(_ name:String, _ tableView:UITableView) -> UITableViewCell {
+        guard tableView != self.searchTable else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell") as! SearchTableViewCell
+            cell.configureSelf(name)
+            cell.delegate = self
+            return cell
+        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! UserTableViewCell
+        cell.configureSelf(name)
         cell.delegate = self
         return cell
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var title:String?
-        if tableView == self.searchTable {
-            title = self.searchList?[indexPath.row]
-        }else{
-            title = self.friendsList?[indexPath.row]
+        guard tableView != self.searchTable else {
+            
+            title = (self.searchList?[indexPath.row])! as String?
+            return configureCell(title!, tableView)
         }
-        return configureCell(title!)
+        if self.friendsList?.count == nil {
+            title = "Add More Friends"
+        } else {
+            title = (self.friendsList?[indexPath.row])! as String?
+        }
+        return configureCell(title!, tableView)
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableView == self.friendsTable {
+        guard tableView != self.friendsTable else {
             let count:Int? = (self.friendsList?.count)
-            if count == nil {
-                return 0
-            }else{
-                return count!
+            guard count != nil else {
+                return 1
             }
-        }else{
-            let count:Int? = (self.searchList?.count)
-            if count == nil {
-                return 0
-            }else{
-                return count!
+            return count! as Int
+        }
+        let count:Int? = (self.searchList?.count)
+        guard count != nil else {
+            return 0
+        }
+        return count! as Int
+    }
+    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        guard tableView == friendsTable else {
+            if (self.searchField.text?.isEmpty)! {
+                return [""]
+            } else {
+                return ["Results"]
             }
         }
+        return ["Friends"]
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1

@@ -189,7 +189,7 @@
                                     <constraint firstAttribute="width" secondItem="ejh-zo-tF2" secondAttribute="height" multiplier="171:110" id="icC-dE-UqL"/>
                                 </constraints>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="RBm-B4-J1G" detailTextLabel="EKK-pI-vUB" style="IBUITableViewCellStyleSubtitle" id="wWf-rC-WmP" customClass="UserTableViewCell" customModule="cricket501keeper" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" textLabel="RBm-B4-J1G" detailTextLabel="EKK-pI-vUB" style="IBUITableViewCellStyleSubtitle" id="wWf-rC-WmP" customClass="UserTableViewCell" customModule="cricket501keeper" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="56" width="345" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wWf-rC-WmP" id="GeD-eG-QD3">
@@ -211,7 +211,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Shd-63-6BP">
-                                                    <rect key="frame" x="281" y="6" width="30" height="30"/>
+                                                    <rect key="frame" x="152" y="6" width="30" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <connections>
                                                         <action selector="buttonFunction:" destination="wWf-rC-WmP" eventType="touchUpInside" id="TFm-Ap-HnQ"/>
@@ -220,6 +220,7 @@
                                             </subviews>
                                             <color key="backgroundColor" red="0.53332779259999996" green="0.53332779259999996" blue="0.53332779259999996" alpha="1" colorSpace="calibratedRGB"/>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <connections>
                                             <outlet property="checkButton" destination="Shd-63-6BP" id="Nsw-bW-VMk"/>
                                             <outlet property="detailLabel" destination="EKK-pI-vUB" id="yXg-6k-fvc"/>
@@ -247,7 +248,7 @@
                                     <constraint firstAttribute="width" secondItem="cc9-sW-f48" secondAttribute="height" multiplier="345:223" id="3SJ-cV-hEC"/>
                                 </constraints>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="searchCell" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="searchCell" textLabel="6GZ-yA-ysR" detailTextLabel="BGs-dW-eRP" style="IBUITableViewCellStyleSubtitle" id="3x2-dZ-dIB" customClass="UserTableViewCell" customModule="cricket501keeper" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="searchCell" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="searchCell" textLabel="6GZ-yA-ysR" detailTextLabel="BGs-dW-eRP" style="IBUITableViewCellStyleSubtitle" id="3x2-dZ-dIB" customClass="SearchTableViewCell" customModule="cricket501keeper" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="56" width="345" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3x2-dZ-dIB" id="qgk-i9-Ixb">
@@ -269,12 +270,18 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jA3-uH-EHc">
-                                                    <rect key="frame" x="277" y="6" width="30" height="30"/>
+                                                    <rect key="frame" x="147" y="6" width="30" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </button>
                                             </subviews>
                                             <color key="backgroundColor" red="0.53332779259999996" green="0.53332779259999996" blue="0.53332779259999996" alpha="1" colorSpace="calibratedRGB"/>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <outlet property="checkButton" destination="jA3-uH-EHc" id="guE-cP-zcY"/>
+                                            <outlet property="detailLabel" destination="BGs-dW-eRP" id="HBk-nK-5sb"/>
+                                            <outlet property="titleLabel" destination="6GZ-yA-ysR" id="ZrB-Sc-s5c"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
@@ -328,7 +335,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ejZ-z7-MbW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-163" y="229"/>
+            <point key="canvasLocation" x="-164" y="228.93553223388307"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
@@ -464,7 +471,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L1P-B0-tP4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-164" y="1146"/>
+            <point key="canvasLocation" x="-164" y="1052"/>
         </scene>
         <!--summary-->
         <scene sceneID="y4i-oz-b7R">
@@ -565,7 +572,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="COG-rg-Wuy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="531" y="1147"/>
+            <point key="canvasLocation" x="530" y="1053"/>
         </scene>
         <!--Summary Cricket View Controller-->
         <scene sceneID="sCR-sb-Xpc">
@@ -848,7 +855,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6re-Mc-BTh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1224" y="1147"/>
+            <point key="canvasLocation" x="1223" y="1053"/>
         </scene>
         <!--shot-->
         <scene sceneID="yeH-C1-oLk">

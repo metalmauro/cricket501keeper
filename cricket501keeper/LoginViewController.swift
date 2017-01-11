@@ -117,6 +117,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 }
                 let rootV = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
                 rootV.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen") as! ViewController
+                rootV.leftDrawerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "socialView")
                 rootV.reloadInputViews()
             }
         }

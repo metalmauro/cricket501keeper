@@ -26,9 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             config.isLocalDatastoreEnabled = true
         }
         Parse.initialize(with: config)
-        let appDelegate  = UIApplication.shared.delegate as! AppDelegate
-        let rootView = appDelegate.window!.rootViewController as! RootViewController
         self.currentUser = PFUser.current()
+        
+        let rootView = self.window!.rootViewController as! RootViewController
+        
         if self.currentUser == nil {
             rootView.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "login")
             rootView.openDrawerGestureModeMask = MMOpenDrawerGestureMode.all
