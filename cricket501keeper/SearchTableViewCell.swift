@@ -19,7 +19,7 @@ class SearchTableViewCell: UITableViewCell {
     @IBOutlet weak var detailLabel: UILabel!
     @IBOutlet weak var checkButton: UIButton!
     var username:String?
-    var delegate:SocialCellDelegate?
+    var delegate:SearchCellDelegate?
     var select:Bool?
     
     override func awakeFromNib() {
@@ -50,7 +50,7 @@ class SearchTableViewCell: UITableViewCell {
     }
     
     @IBAction func buttonFunction(_ sender: Any) {
-        self.delegate?.addOpponent(self.titleLabel.text!)
+        self.delegate?.addFriend(self.titleLabel.text!)
     }
 }
 

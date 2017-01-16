@@ -8,8 +8,9 @@
 
 import UIKit
 import Parse
+import NVActivityIndicatorView
 
-class CricketGameManager: NSObject {
+class CricketGameManager: NSObject, GameManager {
     
     var game:PFObject?
     var player:PFUser?
@@ -17,9 +18,8 @@ class CricketGameManager: NSObject {
     var opponent:PFObject?
     var opponentPoints:PFObject?
     
-    //MARK: Cricket Rulings funcitons
-    func isGameOver() -> Bool {
-       
+    //MARK: GameManager functions
+    func isGameOver(_ lastShot:String) -> Bool {
         var completed:Bool = false
         //check Player
         var playerFrames = 0
@@ -53,42 +53,21 @@ class CricketGameManager: NSObject {
         }
         return completed
     }
-    func isSliceClosed(_ title:String, points:PFObject) -> Bool {
-        var closed:Bool = false
-        let hits = points[title] as! Int
-        if hits >= 3 {
-            closed = true
-        }
-        return closed
+    
+    func addOpponent(_ user:PFObject) {
+        self.opponent = user
+    }
+    // increase game's TurnCounter and save
+    func advanceTurn() {
+        let turn = self.game?.value(forKey: "turnCounter") as? Int
+        self.game?["turnCounter"] = turn! + 1
+        self.game?.saveInBackground()
     }
     
     // points object will have number values for 'slice' key set in TurnViewController (after shots have been made)
     // we will take the unaltered 'totalPoints' value for key, and update it if we should
-    //MARK: - Point Functions
-    func earnedPoints(player:PFUser, points:PFObject) -> Bool {
-        let previousPoints = points.value(forKey: "totalPoints") as! Int
-        var earned:Bool = false
-        let calculated = self.calculatePoints(points: points)
-        if calculated > previousPoints {
-            // calculated points are greater than previous
-            // set new point value to existing 'previousPoints' value
-            points.setObject(calculated, forKey: "totalPoints")
-            //save
-            points.saveInBackground(block: { (success, error) in
-                guard error == nil else {
-                    print((error?.localizedDescription)!)
-                    print("error saving point values in 'shouldEarnPoints' - CricketGameManager")
-                    return
-                }
-                if success == true {
-                    print("success saving totalPoints")
-                    earned = true
-                }
-            })
-        }
-        return earned
-    }
-    func calculatePoints(points:PFObject) -> Int {
+   
+    func calculatePoints(_ points:PFObject) -> Int {
         var earnedPoints = 0
         for var index in 15...22 {
             if index == 21 {
@@ -106,60 +85,14 @@ class CricketGameManager: NSObject {
         return earnedPoints
     }
     
-    // MARK: Custom Init and Parse fetching
-    init(withGameID:String) {
-        super.init()
-        let query = PFQuery(className: "GameCricket")
-        var foundGame:PFObject?
-        query.fromLocalDatastore()
-        let gamesFound = try? query.findObjects()
-        foundGame = gamesFound?.last
-        if foundGame != nil {
-            self.game = foundGame
-            let playerRelations = foundGame?.relation(forKey: "userPlayers")
-            playerRelations?.query().findObjectsInBackground(block: { (objects, error) in
-                if let error = error {
-                    print(error.localizedDescription)
-                    print("couldn't find objects from relations")
-                } else {
-                    guard (objects?.count)! == 2 else {
-                        self.player = objects?.first as? PFUser
-                        return
-                    }
-                    self.player = objects?.first as? PFUser
-                    self.opponent = objects?.last as? PFUser
-                }
-            })
-            let localRelations = foundGame?.relation(forKey: "locals")
-            localRelations?.query().findObjectsInBackground(block: { (objects, error) in
-                if let error = error {
-                    print(error.localizedDescription)
-                    print("couldn't find objects from relations")
-                } else {
-                    guard (objects?.count)! > 0 else {
-                        print("no temp opponents in this game")
-                        return
-                    }
-                    self.opponent = (objects?.first)! as PFObject
-                }
-            })
-            self.playerPoints = foundGame?.object(forKey: "playerPoints") as? PFObject
-            self.playerPoints?.fetchIfNeededInBackground()
-            self.opponentPoints = foundGame?.object(forKey: "opponentPoints") as? PFObject
-            self.opponentPoints?.fetchIfNeededInBackground()
-            if self.playerPoints == nil || self.opponentPoints == nil {
-                print("one of our points objects from the fetched Game is nil")
-            }
-        } else {
-            print("foundGame was nil")
-        }
-    }
-    
     func currentTurn() -> Int {
         return self.game?.object(forKey: "turnCounter") as! Int
     }
     func currentPlayer() -> String {
         if self.currentTurn() % 2 == 0 {
+            guard self.opponent != nil else {
+                return ""
+            }
             return self.opponent?.value(forKey: "username") as! String
         } else {
             return self.player?.value(forKey: "username") as! String
@@ -168,5 +101,100 @@ class CricketGameManager: NSObject {
     func gameHasEnded() {
         self.game?["timeEnd"] = Date()
         self.game?.saveInBackground()
+    }
+    //Parse Game creation and save
+    func createGame(){
+        
+        let newGame = PFObject(className: "Game501")
+        newGame["timeStart"] = Date()
+        self.player = PFUser.current()
+        
+        let playerRelations = newGame.relation(forKey: "userPlayers")
+        let locals = newGame.relation(forKey: "Locals")
+        if self.opponent == nil {
+            let localOpp = PFObject(className: "localOpp")
+            localOpp["creator"] = self.player
+            locals.add(localOpp)
+            localOpp.saveInBackground()
+            self.opponent = localOpp
+            let localRelate = self.player?.relation(forKey: "Locals")
+            localRelate?.add(localOpp)
+            playerRelations.add(self.player!)
+        } else {
+            playerRelations.add(self.player!)
+            playerRelations.add(self.opponent!)
+        }
+        newGame["turnCounter"] = 1
+        
+        // device owner points
+        let p1Points = PFObject(className: "Pts501")
+        p1Points["Player"] = self.player
+        newGame["playerPoints"] = p1Points
+        // their friend's points
+        let p2Points = PFObject(className: "Pts501")
+        if self.opponent != nil {
+            p2Points["Player"] = self.opponent!
+        } else {
+            p2Points["Player"] = NSNull()
+        }
+        newGame["opponentPoints"] = p2Points
+        
+        self.pointsIteration(p1Points)
+        self.pointsIteration(p2Points)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+            newGame.saveInBackground { (success, error) in
+                if let error = error {
+                    print((error.localizedDescription))
+                    print("sorry about that save attempt (GM501)")
+                } else {
+                    print("Game saved")
+                    let pinnedGame = String(format: "501:%@v%@", (self.player?.username)!, (self.opponent?.value(forKey: "username") as! String))
+                    newGame.pinInBackground(withName: pinnedGame) { (success, error) in
+                        if let error = error {
+                            print((error.localizedDescription))
+                            print("sorry about that pin attempt GM501")
+                        } else {
+                            print("GM501 pinned")
+                            NVActivityIndicatorPresenter.sharedInstance.stopAnimating()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //MARK: - Point Functions
+    func pointsIteration(_ points:PFObject) {
+        // it's a cricket game
+        for index in 0...5 {
+            let sliceTitle = String(format: "p%d", 20-index)
+            points[sliceTitle] = 0
+        }
+        points["p25"] = 0
+        points["p0"] = 0
+        points["totalPoints"] = 0
+        points.saveInBackground()
+    }
+    func isSliceClosed(_ title:String, points:PFObject) -> Bool {
+        var closed:Bool = false
+        let hits = points[title] as! Int
+        if hits >= 3 {
+            closed = true
+        }
+        return closed
+    }
+    func earnedPoints(player:PFUser, points:PFObject) -> Bool {
+        let previousPoints = points.value(forKey: "totalPoints") as! Int
+        var earned:Bool = false
+        let calculated = self.calculatePoints(points)
+        if calculated > previousPoints {
+            // calculated points are greater than previous
+            // set new point value to existing 'previousPoints' value
+            points.setObject(calculated, forKey: "totalPoints")
+            earned = true
+            //save
+            points.saveInBackground()
+        }
+        return earned
     }
 }

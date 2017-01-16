@@ -87,19 +87,13 @@
 			isa = PBXGroup;
 			children = (
 				956E8FBE1E0C2E550084F94F /* AppDelegate.swift */,
-				9548402F1E240BBA006FBF2C /* RootViewController.swift */,
+				95AE33A71E2C077400DB4847 /* Utility Pages */,
+				95AE33A61E2C073700DB4847 /* Summary Pages */,
+				95AE33A51E2C071C00DB4847 /* GMs */,
+				95AE33A41E2C06DC00DB4847 /* Social */,
 				956E8FC01E0C2E550084F94F /* ViewController.swift */,
-				954840311E243033006FBF2C /* SocialViewController.swift */,
-				95A439981E24906E00B79D68 /* UserTableViewCell.swift */,
-				95A4399A1E25AE6600B79D68 /* SearchTableViewCell.swift */,
-				95A29B0B1E142CAA00B926A6 /* LoginViewController.swift */,
-				95683AEA1E0D78190004F140 /* GamePageViewController.swift */,
 				95683AF01E0D785D0004F140 /* TurnViewController.swift */,
 				95683AEC1E0D78340004F140 /* ShotViewController.swift */,
-				9548402D1E22A3B6006FBF2C /* GameManager501.swift */,
-				95A29B0D1E142CF800B926A6 /* Summary501ViewController.swift */,
-				95B722631E1C9B1D00E80203 /* CricketGameManager.swift */,
-				95A29B0F1E142D0200B926A6 /* SummaryCricketViewController.swift */,
 				956E8FC21E0C2E550084F94F /* Main.storyboard */,
 				956E8FC81E0C2E550084F94F /* Assets.xcassets */,
 				956E8FCA1E0C2E550084F94F /* LaunchScreen.storyboard */,
@@ -107,6 +101,44 @@
 				95683AF21E0D7E190004F140 /* cricket501keeper-Bridging-Header.h */,
 			);
 			path = cricket501keeper;
+			sourceTree = "<group>";
+		};
+		95AE33A41E2C06DC00DB4847 /* Social */ = {
+			isa = PBXGroup;
+			children = (
+				954840311E243033006FBF2C /* SocialViewController.swift */,
+				95A29B0B1E142CAA00B926A6 /* LoginViewController.swift */,
+				95A4399A1E25AE6600B79D68 /* SearchTableViewCell.swift */,
+				95A439981E24906E00B79D68 /* UserTableViewCell.swift */,
+			);
+			name = Social;
+			sourceTree = "<group>";
+		};
+		95AE33A51E2C071C00DB4847 /* GMs */ = {
+			isa = PBXGroup;
+			children = (
+				95B722631E1C9B1D00E80203 /* CricketGameManager.swift */,
+				9548402D1E22A3B6006FBF2C /* GameManager501.swift */,
+			);
+			name = GMs;
+			sourceTree = "<group>";
+		};
+		95AE33A61E2C073700DB4847 /* Summary Pages */ = {
+			isa = PBXGroup;
+			children = (
+				95A29B0D1E142CF800B926A6 /* Summary501ViewController.swift */,
+				95A29B0F1E142D0200B926A6 /* SummaryCricketViewController.swift */,
+			);
+			name = "Summary Pages";
+			sourceTree = "<group>";
+		};
+		95AE33A71E2C077400DB4847 /* Utility Pages */ = {
+			isa = PBXGroup;
+			children = (
+				9548402F1E240BBA006FBF2C /* RootViewController.swift */,
+				95683AEA1E0D78190004F140 /* GamePageViewController.swift */,
+			);
+			name = "Utility Pages";
 			sourceTree = "<group>";
 		};
 		BEED8197EBF47313DA8A6288 /* Frameworks */ = {
@@ -416,7 +448,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = kurokakari.cricket501keeper;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "cricket501keeper/cricket501keeper-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

@@ -8,13 +8,14 @@
 
 import UIKit
 import Parse
+import NVActivityIndicatorView
 
 //MARK: - FriendsList Protocol
 protocol FriendsListDelegate {
     func addUserToGame(_ user:PFUser)
 }
 
-class SocialViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SocialCellDelegate, SearchCellDelegate {
+class SocialViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, SocialCellDelegate, SearchCellDelegate, NVActivityIndicatorViewable {
     
     @IBOutlet weak var searchTable: UITableView!
     @IBOutlet weak var friendsTable: UITableView!
@@ -43,8 +44,7 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
         self.refreshControl?.attributedTitle = attributedString
         self.refreshControl?.addTarget(self, action: #selector(SocialViewController.refreshTableView(_:)), for: UIControlEvents.valueChanged)
         self.friendsTable?.addSubview(refreshControl!)
-        
-        
+        self.searchField.delegate = self
         self.currentUser = PFUser.current()
         self.friendsList = self.currentUser?.value(forKey: "friendsList") as? Array
         self.searchList = [""]
@@ -65,27 +65,29 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
     }
     //MARK: - Search for User
     @IBAction func search(_ sender: Any) {
-        let query:PFQuery = PFUser.query()!
+        let query = PFUser.query()!
         query.whereKey("username", contains: self.searchField.text)
         query.findObjectsInBackground { (objects, error) in
-            guard objects != nil else {
-                if (error != nil) {
-                    print(error!.localizedDescription)
+            if let error = error {
+                print(error.localizedDescription)
+                print("Sorry about that search attempt")
+            } else {
+                print("found users containing that string")
+                for index in 0...(objects?.count)!-1 {
+                    let user = objects?[index] as! PFUser
+                    self.searchList?.append(user.username!)
                 }
-                return
-            }
-            for index in 0...(objects?.count)! {
-                let user = objects?[index] as! PFUser
-                self.searchList?.append((user.username)! as String)
+                self.searchTable.reloadData()
             }
         }
     }
     @IBAction func signOut(_ sender: Any) {
         PFUser.logOut()
         let rootV = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
-        rootV.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "login") as! ViewController
+        rootV.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "login") as! LoginViewController
         rootV.reloadInputViews()
     }
+    
     //MARK: - Cell functionality
     func addFriend(_ username:String) {
         self.friendsList?.append(username)
@@ -105,7 +107,6 @@ class SocialViewController: UIViewController, UITableViewDataSource, UITableView
             }
         })
     }
-    
     
     //MARK: - TableView
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

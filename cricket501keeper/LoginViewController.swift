@@ -36,6 +36,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         self.usernameField.text = keychainUser
         self.passwordField.text = keychainPassword
+        self.usernameField.delegate = self
+        self.emailField.delegate = self
         self.passwordField.delegate = self
     }
     func segmentConfigure() {
@@ -98,7 +100,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         let has = "saf8198538906passw".hashValue
         newUser.password = String(format: "%d%d", has.hashValue, password.hashValue)
         newUser.setValue(["spidermatt"], forKey: "friendsList")
-        
+        let local = PFObject(className: "localOpp")
+        local["username"] = "Opponent"
+        newUser["locals"] = local
         newUser.signUpInBackground { (success, error) in
             if let error = error {
                 let errorString = error.localizedDescription as String
@@ -124,15 +128,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     func signInUser(_ name:String, password:String){
         let has = "saf8198538906passw".hashValue
-        PFUser.logInWithUsername(inBackground: name, password: (String(format: "%t%t", has.hashValue, password.hashValue))) { (user, error) in
-            if (error != nil) {
+        let pass = String(format: "%d%d", has.hashValue, password.hashValue)
+        PFUser.logInWithUsername(inBackground: name, password: pass) { (user, error) in
+            if let error = error {
+                print(error.localizedDescription)
                 let alert = UIAlertController(title: "Error", message: "couldn't log in, perhaps the username and/or password was wrong? \n But hey, I'm jsut a computer...", preferredStyle: UIAlertControllerStyle.alert)
                 let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                    print((error?.localizedDescription)!)
                 }
                 alert.addAction(okAction)
                 self.present(alert, animated: true, completion: nil)
-            }else{
+            } else {
                 // save to keychain
                 let userKeySuccess: Bool = KeychainWrapper.standard.set(name, forKey: "user")
                 let passWKeySuccess:Bool = KeychainWrapper.standard.set(password, forKey: "password")
@@ -141,6 +146,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 }
                 let rootV = UIApplication.shared.keyWindow?.rootViewController as! RootViewController
                 rootV.centerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "mainScreen") as! ViewController
+                rootV.leftDrawerViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "socialView") as! SocialViewController
                 rootV.reloadInputViews()
             }
         }

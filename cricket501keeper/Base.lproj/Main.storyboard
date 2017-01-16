@@ -179,7 +179,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
-                                    <action selector="search:" destination="Pyn-tq-K01" eventType="editingChanged" id="F8X-hI-ayv"/>
+                                    <action selector="search:" destination="Pyn-tq-K01" eventType="valueChanged" id="YZ6-CJ-XEf"/>
                                 </connections>
                             </textField>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="black" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="ejh-zo-tF2">
@@ -304,7 +304,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" red="0.12190490217566052" green="0.17281121550309442" blue="0.31157538231382975" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="0.11910933610340174" green="0.1215323439069078" blue="0.15942902260638303" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="cc9-sW-f48" firstAttribute="centerX" secondItem="13M-hT-VCe" secondAttribute="centerX" id="5uS-KL-cIY"/>
                             <constraint firstItem="Jza-Um-5Rm" firstAttribute="top" secondItem="16M-o4-xEJ" secondAttribute="bottom" constant="30" id="9Me-9a-wKm"/>
@@ -435,7 +435,7 @@
                                 <rect key="frame" x="0.0" y="10" width="375" height="667"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zN7-C9-LI1">
-                                <rect key="frame" x="19.5" y="175.5" width="336.5" height="336.5"/>
+                                <rect key="frame" x="19" y="175" width="337.5" height="337.5"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="zN7-C9-LI1" secondAttribute="height" multiplier="1:1" id="2yg-d8-tnd"/>
                                 </constraints>
@@ -445,7 +445,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n84-xH-cWZ">
-                                <rect key="frame" x="19.5" y="78" width="336.5" height="29"/>
+                                <rect key="frame" x="19" y="78" width="337.5" height="29"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -941,6 +941,13 @@
                                     <color key="titleColor" red="0.81272855718085113" green="0.81272855718085113" blue="0.81272855718085113" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                             </button>
+                            <button opaque="NO" tag="1" contentMode="scaleToFill" restorationIdentifier="singleRight" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Q7-kf-e2j" userLabel="singleRight">
+                                <rect key="frame" x="234" y="243" width="93.5" height="218"/>
+                                <color key="backgroundColor" red="0.75155834440000002" green="0.75155834440000002" blue="0.75155834440000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="single">
+                                    <color key="titleColor" red="0.75155834441489366" green="0.75155834441489366" blue="0.75155834441489366" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                            </button>
                             <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="enM-T2-Wdb" userLabel="spinCCW">
                                 <rect key="frame" x="348" y="131" width="27" height="536"/>
                                 <constraints>
@@ -1031,12 +1038,14 @@
                                     <action selector="shotsConfirmed:" destination="f8X-aE-E75" eventType="touchUpInside" id="dPf-Au-V1H"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="1" contentMode="scaleToFill" restorationIdentifier="singleRight" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Q7-kf-e2j" userLabel="singleRight">
-                                <rect key="frame" x="234" y="243" width="93.5" height="218"/>
-                                <color key="backgroundColor" red="0.75155834440000002" green="0.75155834440000002" blue="0.75155834440000002" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="single">
-                                    <color key="titleColor" red="0.75155834441489366" green="0.75155834441489366" blue="0.75155834441489366" alpha="1" colorSpace="calibratedRGB"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wWE-ta-bpT">
+                                <rect key="frame" x="20" y="28" width="58" height="30"/>
+                                <state key="normal" title="Go Back">
+                                    <color key="titleColor" red="0.90768367686170215" green="0.90768367686170215" blue="0.90768367686170215" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
+                                <connections>
+                                    <action selector="goBack:" destination="f8X-aE-E75" eventType="touchUpInside" id="i7Z-XP-RH8"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1060,6 +1069,7 @@
                             <constraint firstItem="EDb-cC-1Pw" firstAttribute="centerX" secondItem="akW-tw-Ptw" secondAttribute="centerX" id="Hbv-xd-Og6"/>
                             <constraint firstItem="enM-T2-Wdb" firstAttribute="top" secondItem="akW-tw-Ptw" secondAttribute="top" id="JQj-dI-H2S"/>
                             <constraint firstItem="Nu8-bT-pNl" firstAttribute="centerY" secondItem="akW-tw-Ptw" secondAttribute="centerY" multiplier="0.67" id="Jqv-kH-97v"/>
+                            <constraint firstItem="mcc-Nu-8wH" firstAttribute="top" secondItem="wWE-ta-bpT" secondAttribute="bottom" constant="-38" id="LC7-xI-tfa"/>
                             <constraint firstItem="Ddi-CW-NNB" firstAttribute="centerX" secondItem="akW-tw-Ptw" secondAttribute="centerX" id="MJZ-6R-Lfb"/>
                             <constraint firstItem="tmb-u0-PzP" firstAttribute="centerX" secondItem="mcc-Nu-8wH" secondAttribute="centerX" id="Nnu-cr-BDh"/>
                             <constraint firstItem="enM-T2-Wdb" firstAttribute="height" secondItem="akW-tw-Ptw" secondAttribute="height" multiplier="0.55" id="NoR-mn-njD"/>
@@ -1067,6 +1077,7 @@
                             <constraint firstItem="Rj7-4a-4PC" firstAttribute="centerX" secondItem="mcc-Nu-8wH" secondAttribute="centerX" multiplier="0.4" id="PfQ-XA-PkS"/>
                             <constraint firstItem="GuA-Vf-tbD" firstAttribute="centerY" secondItem="WbU-XY-fvi" secondAttribute="centerY" id="Pj6-tX-JPh"/>
                             <constraint firstItem="GuA-Vf-tbD" firstAttribute="width" secondItem="GuA-Vf-tbD" secondAttribute="height" multiplier="78:25" id="QNm-CA-WVL"/>
+                            <constraint firstItem="wWE-ta-bpT" firstAttribute="leading" secondItem="mcc-Nu-8wH" secondAttribute="leading" constant="20" id="QRn-dz-BOf"/>
                             <constraint firstItem="GuA-Vf-tbD" firstAttribute="height" secondItem="WbU-XY-fvi" secondAttribute="height" id="RV3-bL-L2u"/>
                             <constraint firstItem="IFF-3i-o7U" firstAttribute="top" secondItem="Nu8-bT-pNl" secondAttribute="top" id="SUB-sR-UaL"/>
                             <constraint firstItem="Nu8-bT-pNl" firstAttribute="centerX" secondItem="Ddi-CW-NNB" secondAttribute="centerX" id="TP1-ex-6vl"/>
@@ -1106,6 +1117,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="backButton" destination="wWE-ta-bpT" id="lso-dO-6lE"/>
                         <outlet property="boardImage" destination="akW-tw-Ptw" id="ztm-l1-4Mr"/>
                         <outlet property="bull" destination="Ttq-Ay-3t2" id="6qM-FQ-3gN"/>
                         <outlet property="confirmScoresButton" destination="KzQ-Ao-dqc" id="BtO-7I-P0a"/>
@@ -1133,7 +1145,7 @@
                 <swipeGestureRecognizer direction="right" id="EiS-bp-Zx9" userLabel="rightSwipe"/>
                 <swipeGestureRecognizer direction="left" id="12I-mF-wWO" userLabel="leftSwipe"/>
             </objects>
-            <point key="canvasLocation" x="-164" y="1969"/>
+            <point key="canvasLocation" x="-164" y="1968.6656671664171"/>
         </scene>
     </scenes>
     <resources>

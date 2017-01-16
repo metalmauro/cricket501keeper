@@ -44,7 +44,6 @@ class UserTableViewCell: UITableViewCell {
         self.detailLabel.isHidden = false
         self.checkButton.isHidden = false
         self.checkButton.setImage(UIImage(named: "redcheck"), for: UIControlState.normal)
-        
     }
     func configureSelf(_ name:String){
         self.select = false
@@ -53,5 +52,6 @@ class UserTableViewCell: UITableViewCell {
     }
     @IBAction func buttonFunction(_ sender: Any) {
         self.delegate?.addOpponent(self.titleLabel.text!)
+        self.detailLabel.text = "Added to game!"
     }
 }

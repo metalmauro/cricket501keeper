@@ -8,8 +8,9 @@
 
 import UIKit
 import Parse
+import NVActivityIndicatorView
 
-class GameManager501: NSObject {
+class GameManager501: NSObject, GameManager {
     
     var game:PFObject?
     var player:PFUser?
@@ -17,8 +18,10 @@ class GameManager501: NSObject {
     var opponent:PFObject?
     var opponentPoints:PFObject?
     
-    //MARK: Game fuctions
-    // update Point values
+    //MARK: - GameManager Functions
+    func addOpponent(_ user:PFObject) {
+        self.opponent = user
+    }
     func updatedPoints(_ points:PFObject) -> Bool {
         let currentPoints = points.value(forKey: "totalPoints") as! Int
         let calculated = 501 - self.calculatePoints(points)
@@ -63,7 +66,7 @@ class GameManager501: NSObject {
         return false
     }
     // increase game's TurnCounter and save
-    func stepTurnCounter() {
+    func advanceTurn() {
         let turn = self.game?.value(forKey: "turnCounter") as? Int
         self.game?["turnCounter"] = turn! + 1
         self.game?.saveInBackground()
@@ -83,55 +86,108 @@ class GameManager501: NSObject {
         self.game?.saveInBackground()
     }
     
-    // MARK: Custom Init and Parse fetching
-    init(withGameID:String) {
-        super.init()
-        let query = PFQuery(className: "Game501")
-        var foundGame:PFObject?
-        query.fromLocalDatastore()
-        let gamesFound = try? query.findObjects()
-        foundGame = gamesFound?.last
+    //MARK: - Parse Game Creation
+    /*
+     use note:
+     User will have a friendsList array, to which they will choose a player to play against
+     will ahve to add their friend to the game, and will send a Push Notification out to the opponent to join
+     must simply add points and player values to the game of their choice, and then save the game and move forward
+     current Game will be pinned to the device, allowing for easier reference moving forward
+     subsequent View Controllers will fetch the saved game and then use and save data appropriately
+     */
+    /*
+     Games have these Keys we MUST SET properly
+     
+     playerPoints (Pointer)
+     opponentPoints (Pointer)
+     userPlayers (Relation)
+     locals (Relation)
+     turnCounter
+     timeStart
+     timeEnd
+     
+     */
+    
+    func createGame(){
         
-        if foundGame != nil {
-            self.game = foundGame
-            let playerRelations = foundGame?.relation(forKey: "userPlayers")
-            playerRelations?.query().findObjectsInBackground(block: { (objects, error) in
-                if let error = error {
-                    print(error.localizedDescription)
-                    print("couldn't find objects from relations")
-                } else {
-                    guard (objects?.count)! == 2 else {
-                        self.player = objects?.first as? PFUser
-                        return
-                    }
-                    self.player = objects?.first as? PFUser
-                    self.opponent = objects?.last as? PFUser
-                }
-            })
-            let localRelations = foundGame?.relation(forKey: "locals")
-            localRelations?.query().findObjectsInBackground(block: { (objects, error) in
-                if let error = error {
-                    print(error.localizedDescription)
-                    print("couldn't find objects from relations")
-                } else {
-                    guard (objects?.count)! > 0 else {
-                        print("no temp opponents in this game")
-                        return
-                    }
-                    self.opponent = (objects?.first)! as PFObject
-                }
-            })
-            self.playerPoints = foundGame?.object(forKey: "playerPoints") as? PFObject
-            self.playerPoints?.fetchIfNeededInBackground()
-            self.opponentPoints = foundGame?.object(forKey: "opponentPoints") as? PFObject
-            self.opponentPoints?.fetchIfNeededInBackground()
-            if self.playerPoints == nil || self.opponentPoints == nil {
-                print("one of our points objects from the fetched Game is nil")
-            }
+        let newGame = PFObject(className: "Game501")
+        newGame["timeStart"] = Date()
+        self.player = PFUser.current()
+        
+        let playerRelations = newGame.relation(forKey: "userPlayers")
+        let locals = newGame.relation(forKey: "Locals")
+        if self.opponent == nil {
+            let localOpp = PFObject(className: "localOpp")
+            localOpp["creator"] = self.player
+            locals.add(localOpp)
+            self.opponent = localOpp
+            let localRelate = self.player?.relation(forKey: "Locals")
+            localOpp.saveInBackground()
+            localRelate?.add(localOpp)
+            playerRelations.add(self.player!)
         } else {
-            print("foundGame was nil")
+            playerRelations.add(self.player!)
+            playerRelations.add(self.opponent!)
+        }
+        newGame["turnCounter"] = 1
+        
+        // device owner points
+        let p1Points = PFObject(className: "Pts501")
+        p1Points["Player"] = self.player
+        newGame["playerPoints"] = p1Points
+        // their friend's points
+        let p2Points = PFObject(className: "Pts501")
+        
+        if self.opponent != nil {
+            p2Points["Player"] = self.opponent!
+        } else {
+            p2Points["Player"] = NSNull()
+        }
+        newGame["opponentPoints"] = p2Points
+        self.pointsIteration(p1Points)
+        self.pointsIteration(p2Points)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+            newGame.saveInBackground { (success, error) in
+                if let error = error {
+                    print((error.localizedDescription))
+                    print("sorry about that save attempt (GM501)")
+                } else {
+                    print("Game saved")
+                    let pinnedGame = String(format: "501:%@v%@", (self.player?.username)!, (self.opponent?.value(forKey: "username") as! String))
+                    newGame.pinInBackground(withName: pinnedGame) { (success, error) in
+                        if let error = error {
+                            print((error.localizedDescription))
+                            print("sorry about that pin attempt GM501")
+                        } else {
+                            print("GM501 pinned")
+                            NVActivityIndicatorPresenter.sharedInstance.stopAnimating()
+                        }
+                    }
+                }
+            }
         }
     }
+    // Used to init basic point values
+    func pointsIteration(_ points:PFObject) {
+        // it's a 501 game
+        for index in 0...20 {
+            let sliceTitle = String(format: "p%d", 20-index)
+            points[sliceTitle] = 0
+        }
+        points["p25"] = 0
+        points["totalPoints"] = 501
+        points.saveInBackground { (success, error) in
+            if let error = error {
+                print(error.localizedDescription)
+                print("error saving points")
+            } else {
+                print("saved points")
+            }
+        }
+    }
+    
+    
     
     //MARK: Checkout Chart
     // yeah this function is long. Either that or a dictionary would be long

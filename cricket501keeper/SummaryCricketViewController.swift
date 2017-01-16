@@ -8,14 +8,15 @@
 
 import UIKit
 import Parse
+import NVActivityIndicatorView
 
-class SummaryCricketViewController: UIViewController {
+class SummaryCricketViewController: UIViewController, NVActivityIndicatorViewable {
     
     @IBOutlet weak var playerLabel: UILabel!
     @IBOutlet weak var playerPointsLabel: UILabel!
     @IBOutlet weak var opponentLabel: UILabel!
     @IBOutlet weak var opponentPointsLabel: UILabel!
-    
+    var activityView:NVActivityIndicatorView?
     @IBOutlet var playerFrames: [UIImageView]!
     @IBOutlet var opponentFrames: [UIImageView]!
     @IBOutlet var closedMarkers: [UIImageView]!
@@ -26,18 +27,28 @@ class SummaryCricketViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.activityView = NVActivityIndicatorView(frame: self.view.frame,
+                                                    type: NVActivityIndicatorType.ballTrianglePath,
+                                                    color: UIColor.gray,
+                                                    padding: CGFloat(0))
+        self.view.addSubview(self.activityView!)
         self.playerLabel.text = self.gameManager?.player?.value(forKey: "username") as? String
-        self.opponentLabel.text = self.gameManager?.opponent?.value(forKey: "username") as? String
-        
         self.playerPointsLabel.text = String(format: "%d", self.gameManager?.playerPoints?.value(forKey: "totalPoints") as! Int)
+        
+        guard self.gameManager?.opponent != nil else {
+            self.opponentLabel.text = ""
+            self.opponentPointsLabel.text = ""
+            return
+        }
+        
+        self.opponentLabel.text = self.gameManager?.opponent?.value(forKey: "username") as? String
         self.opponentPointsLabel.text = String(format: "%d", self.gameManager?.opponentPoints?.value(forKey: "totalPoints") as! Int)
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         if self.gameManager == nil {
-            self.gameManager = CricketGameManager(withGameID: self.gameQueryInfo!)
+            self.gameManager = CricketGameManager()
         }
         print("Cricket Game started at: ")
         print(self.gameManager?.game?.value(forKey: "timeStart") as! NSString)

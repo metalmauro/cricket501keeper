@@ -13,7 +13,8 @@ class GamePageViewController: UIPageViewController, UIPageViewControllerDataSour
     
     var rules:String?
     public var pageIndex:Int?
-    public var gameQueryInfo:String?
+    public var gm501:GameManager501?
+    public var gmCricket:CricketGameManager?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,13 +22,6 @@ class GamePageViewController: UIPageViewController, UIPageViewControllerDataSour
         self.dataSource = self
         self.pageIndex = 0
         
-        guard self.gameQueryInfo != nil else {
-            // test has failed, we have no objectId for the current game
-            print("segue from 'ViewController' failed, have to objectId to search (GamePageViewController - 26")
-            return
-        }
-        let currentGameArray = gameQueryInfo?.components(separatedBy: ":")
-        self.rules = (currentGameArray?[0])! as String
         self.setViewControllers([self.viewControllerAtIndex(index: 0)!],
                                 direction: UIPageViewControllerNavigationDirection.forward,
                                 animated: true,
@@ -39,16 +33,18 @@ class GamePageViewController: UIPageViewController, UIPageViewControllerDataSour
         switch index {
         case 0:
             let view = storyboard?.instantiateViewController(withIdentifier: "turn") as! TurnViewController
-            view.gameQueryInfo = self.gameQueryInfo
+            if self.gm501 == nil {
+                view.cricketGM = self.gmCricket
+            }
             return view
         case 1:
-            guard (self.rules?.contains("501"))! else {
+            guard (self.gm501 != nil) else {
                 let summary = (storyboard?.instantiateViewController(withIdentifier: "cricketSummary") as! SummaryCricketViewController)
-                summary.gameQueryInfo = self.gameQueryInfo
+                summary.gameManager = self.gmCricket
                 return summary
             }
             let summary = (storyboard?.instantiateViewController(withIdentifier: "501Summary") as! Summary501ViewController)
-            summary.gameQueryInfo = self.gameQueryInfo
+            summary.gm = self.gm501
             return summary
         default:
             return nil

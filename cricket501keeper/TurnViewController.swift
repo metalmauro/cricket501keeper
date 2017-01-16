@@ -8,33 +8,38 @@
 
 import UIKit
 import Parse
+import NVActivityIndicatorView
 
-class TurnViewController: UIViewController {
+class TurnViewController: UIViewController, NVActivityIndicatorViewable {
     
     @IBOutlet weak var currentPlayerLabel: UILabel!
     public var madeShots:NSMutableArray?
-    public var gameQueryInfo:String?
     
     var game:PFObject?
     var player:PFUser?
     var opponent:PFUser?
     var rules:String?
     var turnCounter:Int?
-    
+    var activityView:NVActivityIndicatorView?
     var cricketGM:CricketGameManager?
     var GM501:GameManager501?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let gameInfoArray = self.gameQueryInfo?.components(separatedBy: ":")
-        let rules = gameInfoArray?[0]
+        if self.cricketGM == nil {
+            // start spinning
+            self.cricketGM = CricketGameManager()
+            print("spinning")
+            self.activityView = NVActivityIndicatorView(frame: self.view.frame,
+                                                        type: NVActivityIndicatorType.ballTrianglePath,
+                                                        color: UIColor.orange,
+                                                        padding: 0)
+            self.view.addSubview(self.activityView!)
+        }
         
-        guard (rules?.contains("501"))! else {
+        guard (self.GM501 != nil) else {
             // is cricket game
-            if self.cricketGM == nil {
-                self.cricketGM = CricketGameManager(withGameID: self.gameQueryInfo!)
-            }
             self.turnCounter = self.cricketGM?.currentTurn()
             self.currentPlayerLabel.text = self.cricketGM?.currentPlayer()
             return
@@ -56,18 +61,11 @@ class TurnViewController: UIViewController {
         }
         
         print("we have 3 shots to add")
-        let array = self.gameQueryInfo?.components(separatedBy: ":")
-        self.rules = array?[0]
+        
         //add point values to the points in game
-        guard (rules?.isEqual("501"))! else {
+        guard (self.GM501 != nil) else {
             
-            // cricket game
-            // init cricketGM if there isn't one already
-            if self.cricketGM == nil {
-                self.cricketGM = CricketGameManager(withGameID: self.gameQueryInfo!)
-            }
-            // still need to relate organization of GM501 to cricketGM
-            guard (self.currentPlayerLabel.text?.isEqual(self.opponent?.value(forKey: "username") as! String))! else {
+            guard (self.cricketGM?.opponent?.value(forKey: "username") as! String).isEqual((self.cricketGM?.currentPlayer())!) else {
                     // is player
                     self.addCricketPoints(self.game?.object(forKey: "playerPoints") as! PFObject)
                     let success = self.cricketGM?.earnedPoints(player: self.player!, points: self.game?.object(forKey: "playerPoints") as! PFObject)
@@ -85,7 +83,7 @@ class TurnViewController: UIViewController {
             
             
             //check if game has ended due to point additions
-            guard (self.cricketGM?.isGameOver())! else {
+            guard (self.cricketGM?.isGameOver(self.madeShots?.lastObject as! String))! else {
                 //game is still going
                 return
             }
@@ -98,11 +96,9 @@ class TurnViewController: UIViewController {
         
         //501 game
         // make 501 GM if there isnt one already
-        if self.GM501 == nil {
-            self.GM501 = GameManager501.init(withGameID: self.gameQueryInfo!)
-        }
+        
         // which player is current
-        guard (self.currentPlayerLabel.text?.isEqual(self.GM501?.currentPlayer()))! else {
+        guard (self.GM501?.opponent?.value(forKey: "username") as! String).isEqual((self.GM501?.currentPlayer())!) else {
             // player is current
             self.add501Points((self.GM501?.playerPoints)!)
             if (self.GM501?.updatedPoints((self.GM501?.playerPoints)!))! {
@@ -217,5 +213,12 @@ class TurnViewController: UIViewController {
                 print("save successful")
             }
         }
+    }
+    //MARK: - activityControl
+    func hasFinishedLoading() {
+        self.activityView?.stopAnimating()
+    }
+    func startedLoading() {
+        self.activityView?.startAnimating()
     }
 }

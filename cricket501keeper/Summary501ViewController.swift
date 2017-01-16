@@ -8,14 +8,16 @@
 
 import UIKit
 import Parse
+import NVActivityIndicatorView
 
-class Summary501ViewController: UIViewController {
+class Summary501ViewController: UIViewController, NVActivityIndicatorViewable {
 
     @IBOutlet weak var playerLabel: UILabel!
     @IBOutlet weak var opponentLabel: UILabel!
     @IBOutlet weak var playerPts: UILabel!
     @IBOutlet weak var oppPoints: UILabel!
     
+    var activityView:NVActivityIndicatorView?
     @IBOutlet weak var playerCloseOutHint: UITextView!
     @IBOutlet weak var oppCloseOutHint: UITextView!
     
@@ -24,10 +26,15 @@ class Summary501ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.activityView = NVActivityIndicatorView(frame: self.view.frame,
+                                                    type: NVActivityIndicatorType.ballTrianglePath,
+                                                    color: UIColor.gray,
+                                                    padding: CGFloat(0))
+        self.view.addSubview(self.activityView!)
     }
     override func viewWillAppear(_ animated: Bool) {
         if self.gm == nil {
-            self.gm = GameManager501(withGameID: self.gameQueryInfo!)
+            self.gm = GameManager501()
         }
         self.playerLabel.text = self.gm?.player?.username!
         self.opponentLabel.text = self.gm?.opponent?.value(forKey: "username") as? String
@@ -36,4 +43,5 @@ class Summary501ViewController: UIViewController {
         self.playerCloseOutHint.text = self.gm?.stringToClose((self.gm?.playerPoints)!)
         self.oppCloseOutHint.text = self.gm?.stringToClose((self.gm?.opponentPoints)!)
     }
+    
 }

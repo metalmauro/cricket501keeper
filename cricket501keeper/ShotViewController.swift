@@ -16,6 +16,7 @@ import Parse
 
 class ShotViewController: UIViewController {
 
+    @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var boardImage: UIImageView!
     @IBOutlet weak var shot1Label: UILabel!
     @IBOutlet weak var shot2Label: UILabel!
@@ -31,7 +32,7 @@ class ShotViewController: UIViewController {
     @IBOutlet var spinButtons: [UIButton]!
     @IBOutlet var rightSwipe: UISwipeGestureRecognizer!
     @IBOutlet var leftSwipe: UISwipeGestureRecognizer!
-    
+    var rotationAngle: CGFloat = 0
     let boardNumbers:Array<String> = ["20", "1", "18", "4", "13",
                                       "6", "10", "15", "2", "17",
                                       "3", "19", "7", "16", "8",
@@ -51,7 +52,7 @@ class ShotViewController: UIViewController {
                 button.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
                 return
             }
-            button.transform = CGAffineTransform(rotationAngle: CGFloat(24.9))
+            button.transform = CGAffineTransform(rotationAngle: CGFloat(15)/CGFloat(M_PI))
             button.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
         }
         for button:UIButton in self.rightButtons {
@@ -59,7 +60,7 @@ class ShotViewController: UIViewController {
                 button.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
                 return
             }
-            button.transform = CGAffineTransform(rotationAngle: CGFloat(-24.9))
+            button.transform = CGAffineTransform(rotationAngle: CGFloat(15)/CGFloat(M_PI))
             button.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
         }
         self.bull.addTarget(self, action: #selector(setShotValue(sender:)), for: UIControlEvents.touchUpInside)
@@ -79,6 +80,15 @@ class ShotViewController: UIViewController {
         // set shotCount and currentSlice
         self.shotCount = 0
         currentSlice = self.boardNumbers.index(of: "20")
+        self.shot1Label.text = ""
+        self.shot2Label.text = ""
+        self.shot3Label.text = ""
+        self.madeShots = []
+    }
+    
+    
+    @IBAction func goBack(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
     }
     
     // adds a shot to the madeShots array
@@ -144,18 +154,14 @@ class ShotViewController: UIViewController {
     func clockwiseSpin() {
         self.currentSlice = currentSlice("right", self.currentSlice)
         //taken from our lecture on Core Animations
-        UIView.animateKeyframes(
-            withDuration: 4.0,
-            delay: 0,
-            options: .calculationModeLinear,
-            animations: {
-                //Note: Relative times are percentages
-                UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 0.5, animations: { 
-                    self.boardImage.transform.rotated(by: -0.314)
-                })
-        },
-            completion: nil)
-        
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       options: UIViewAnimationOptions.curveEaseIn,
+                       animations: {
+                        self.rotationAngle -= 0.314
+                        self.boardImage.transform = CGAffineTransform(rotationAngle: self.rotationAngle);
+                        
+        }, completion: nil)
     }
     func counterClockwiseSpin() {
         self.currentSlice = currentSlice("left", self.currentSlice)
